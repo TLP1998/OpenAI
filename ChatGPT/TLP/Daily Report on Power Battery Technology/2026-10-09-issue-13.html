@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>动力电池技术日报_2026-10-09_第13期_热失控排气泄压与多源预警_深度版</title><style>
+@page{size: A4; margin:12mm}
+:root{--ink:#172d3f;--blue:#123e61;--soft:#eaf1f6;--line:#c7d4de;--red:#ad3030;--gold:#8a692a;--paper:#fffefa}
+*{box-sizing:border-box}html{background:#e5e9ec}body{margin:0;color:var(--ink);font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;line-height:1.8;font-size:15px}
+.page{width:min(1110px,100%);margin:20px auto;padding:34px 42px;background:var(--paper);box-shadow:0 5px 26px #182a351a}
+.mast{display:grid;grid-template-columns:1fr 300px;gap:20px;border-bottom:5px solid var(--blue);padding-bottom:15px}
+.brand{font-family:"Noto Serif CJK SC",serif;font-size:37px;font-weight:900;letter-spacing:1px;color:var(--blue);line-height:1.2}.brand em{color:var(--red);font-style:normal}
+.date{font-size:13px;color:#637685;letter-spacing:.05em;margin-top:8px}.guide{font-size:12px;background:var(--soft);border:1px solid #aabecb;padding:10px 13px;border-radius:7px;line-height:1.75}
+.guide b{font-size:13px;color:var(--blue)}.issue{font-size:12px;color:#677985;margin-top:6px}
+h1{font-size:16px;font-weight:600;color:#6a7b88;margin:14px 0 0}h2{font-family:"Noto Serif CJK SC",serif;font-size:32px;line-height:1.45;color:var(--blue);margin:10px 0 15px;padding:12px 15px;background:#eef4f8;border-left:5px solid var(--red)}
+h3{font-size:20px;color:var(--blue);background:linear-gradient(90deg,#edf4f8,white);padding:9px 11px;margin:26px 0 12px;border-left:4px solid var(--blue);break-after:avoid}
+p{margin:11px 0;text-align:justify}strong{font-weight:750}p strong{color:#153c57}table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px;table-layout:fixed}th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;overflow-wrap:anywhere}th{background:#e9f1f6;text-align:left;color:var(--blue)}tr:nth-child(even) td{background:#fbfcfd}
+.eq{font-family:"Times New Roman",serif;font-size:24px;line-height:1.5;text-align:center;padding:16px 9px;margin:15px 0;background:#f4f8fa;border:1px solid #cad9e4;border-radius:7px;white-space:normal;overflow-wrap:anywhere}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.22;font-size:.91em;margin:0 .12em}.frac>span:first-child{padding:0 .15em .13em;border-bottom:1.5px solid currentColor}.frac>span:last-child{padding:.13em .15em 0}
+.result{display:inline-block;border:2px solid var(--blue);border-radius:6px;padding:7px 16px;color:var(--blue);background:white;font-size:1.1em}
+sub,sup{font-size:.68em}a{color:#195a86;text-decoration:none;overflow-wrap:anywhere}a:hover{text-decoration:underline}
+blockquote{border-left:4px solid var(--red);background:#fff1ef;padding:9px 14px;margin:12px 0}
+hr{border:none;border-top:1px solid var(--line)}.patent{background:#fffaf0;border:1.5px solid #c3aa70;padding:15px 17px;border-radius:8px}
+#content h3:nth-of-type(11){background:#fbf1df;border-left-color:var(--gold);color:#735521}
+.footer{border-top:3px solid var(--blue);padding-top:12px;font-size:12px;color:#677985;margin-top:28px}
+@media(max-width:760px){.page{margin:0;padding:16px 14px;box-shadow:none}.mast{grid-template-columns:1fr;gap:10px}.brand{font-size:30px}h2{font-size:24px}h3{font-size:18px}.eq{font-size:19px;padding:12px 5px}table{font-size:12px}th,td{padding:6px}.guide{font-size:12px}}
+</style></head><body><main class="page"><header class="mast"><div><div class="brand">动力电池<em>技术日报</em></div><div class="date">2026年10月09日　星期五　/　第13期　/　热安全专题</div><div class="issue">POWER BATTERY ENGINEERING REVIEW · ENGINEERING BRIEF</div></div><aside class="guide"><b>本期导读</b><br>热失控与排气的时间顺序｜LFP/NCM 预警窗口差异｜40 L自由容积压力算例｜泄压面积与堵塞敏感性｜气体传感器盲区｜多证据诊断状态机｜量产DOE｜2个Patent Ideas。</aside></header><article id="content"><h1>动力电池技术日报｜2026-10-09｜第13期</h1>
+<h2>热失控排气泄压与多源预警：为什么“有泄压阀”不等于电池包安全？</h2>
+<p><strong>栏目：热安全 × BMS × Pack 结构 × EE 架构｜技术精读 / 工程评审材料</strong></p>
+
+<p><strong>核心问题。</strong> 电芯失控时，危险不只来自电芯内部放热，还来自可燃、有毒、灼热的排气及其在包内的压力积累、二次点燃和热扩散。量产设计要同时回答：气体从哪里产生、以多快速度释放、沿哪条路径排出、是否进入乘员舱、预警信号是否仍然可信。以下计算均为明确假设的量级算例，不能替代电芯实测、CFD、结构强度或法规认证。</p>
+<h3>01｜先区分四个事件：产气、开阀、热失控、传播</h3>
+<p>电芯在滥用下可能经历 SEI/电解液副反应、内部产气与压力积累、泄压结构打开、强烈放热、喷射/点燃及相邻电芯受热。<strong>电芯开阀不等于已经热失控；气体出现也不一定意味着还有固定的提前量。</strong> 一部分 LFP 试验中开阀到热失控存在较长窗口，但高SOC NCM在某些工况下窗口可能只有数秒。</p>
+<p>2025年《储能科学与技术》国轩团队的对照实验，52 Ah LFP在50% SOC时开阀558 s、热失控1228 s，间隔670 s；在100% SOC时403 s开阀、700 s热失控，间隔297 s。50 Ah NCM在50% SOC时696 s开阀、730 s热失控，间隔34 s；在100% SOC时432 s开阀、439 s热失控，间隔<strong>仅7 s</strong>。这些是特定触发、布置和电芯的实验时间，不能当成所有LFP/NCM的保证提前量。[S2]</p>
+<table>
+<thead>
+<tr>
+<th>实验电芯</th>
+<th style="text-align:right">SOC</th>
+<th style="text-align:right">开阀→热失控间隔</th>
+<th>工程含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>52 Ah LFP</td>
+<td style="text-align:right">50%</td>
+<td style="text-align:right">670 s</td>
+<td>可观察到较长化学预警窗口</td>
+</tr>
+<tr>
+<td>52 Ah LFP</td>
+<td style="text-align:right">100%</td>
+<td style="text-align:right">297 s</td>
+<td>高SOC下窗口缩短</td>
+</tr>
+<tr>
+<td>50 Ah NCM</td>
+<td style="text-align:right">50%</td>
+<td style="text-align:right">34 s</td>
+<td>预警与执行器响应需要更快</td>
+</tr>
+<tr>
+<td>50 Ah NCM</td>
+<td style="text-align:right">100%</td>
+<td style="text-align:right">7 s</td>
+<td>不应把“气体一定提前5分钟”当安全前提</td>
+</tr>
+</tbody>
+</table>
+<p>该研究还发现气体传感器位置越远，信号越弱；复合CO/H₂/烃类信号在其试验中快于CO₂通道。论文报告某一最远检测点CO₂提前热失控至少578 s，<strong>这只是该实验条件下的观测，不能跨化学体系外推</strong>。[S2]</p>
+<h3>02｜为什么电芯温度不高，包内也可能已经有危险气体？</h3>
+<p>BMS通常测的是电芯壳体或极耳附近温度，而反应热点位于内部；壳体热惯性、传感器位置和导热路径造成延迟。相反，开阀释放的H₂、CO、CO₂和挥发性有机物可能先沿排气通道抵达传感器。但气体也会受到包内气流、排气阀开启状态、传感器响应时间和环境交叉敏感性影响。<strong>气体信号更早是“可能性”，不是所有电芯和所有工况下的定律。</strong></p>
+<p>2024年《Journal of Power Sources》对圆柱高镍电芯的试验报告了超过1370 ℃的喷射气体温度及超过150 m/s的喷射速度；这是该研究条件下的极端测量，不应直接用于所有LFP方壳包的设计输入。[S3] 热气还可能夹带颗粒和电解液雾滴，因此泄压通道不只是气动元件，也是热防护、颗粒沉积、绝缘和防火系统的一部分。</p>
+<h3>03｜40 L自由容积：为什么一颗电芯排气也能形成kPa级压力？</h3>
+<p>先做最简单的封闭、等温、理想气体近似。假设电池包某隔舱有效自由容积 <strong>40 L</strong>，气体温度 <strong>300 K</strong>，单体排气在2 s内额外进入 <strong>0.20 mol</strong>，即平均产气率0.10 mol/s；暂时忽略泄压、气体冷凝与温升。</p>
+<div class="eq"><i>P</i><i>V</i> = <i>nRT</i></div>
+<div class="eq"><span class="frac"><span>d<i>P</i></span><span>d<i>t</i></span></span> = <span class="frac"><span><i>RT</i></span><span><i>V</i></span></span> · <i>ṅ</i><sub>in</sub></div>
+<div class="eq"><span class="frac"><span>d<i>P</i></span><span>d<i>t</i></span></span> = <span class="frac"><span>8.314 × 300</span><span>0.040</span></span> × 0.10 ≈ <b>6.24 kPa/s</b></div>
+<p>2 s累计增加：</p>
+<div class="eq"><strong class="result">Δ<i>P</i> ≈ 12.5 kPa</strong></div>
+<p>如果把12.5 kPa均匀作用于0.50 m²的理想受压板面，等效总压力载荷约 <strong>6.25 kN</strong>。实际包体不是单一平板，结构力、变形与失效取决于筋板、密封、约束、局部流场和压力峰值，不能用此数直接验算螺栓。</p>
+<p><strong>敏感性：</strong> 同一产气率下，自由容积从40 L降到20 L，理想初始升压速率约翻倍；从40 L升到80 L则减半。气体被加热、发生二次反应、多个电芯同时排气或阀门未开启时，压力可能更高；泄压畅通时也可能几乎看不到明显升压。因此“压力没升”不等于“没有排气”。</p>
+<h3>04｜泄压口面积算例：13.4 mm等效孔径为什么不是最终设计尺寸？</h3>
+<p>用低压差、近似不可压缩孔口流动作为<strong>概念级初算</strong>：设峰值待排质量流量0.010 kg/s，流量系数0.65，气体密度1.2 kg/m³，允许压差5 kPa。这一流量是独立假设的峰值设计点，不等同于上一节0.10 mol/s的平均值。</p>
+<div class="eq"><i>ṁ</i> = <i>C</i><sub>d</sub> <i>A</i> √(2ρΔ<i>P</i>)</div>
+<div class="eq"><i>A</i> = <span class="frac"><span><i>ṁ</i></span><span><i>C</i><sub>d</sub>√(2ρΔ<i>P</i>)</span></span> ≈ <b>140 mm<sup>2</sup></b></div>
+<p>等效圆孔直径：</p>
+<div class="eq"><strong class="result"><i>d</i><sub>eq</sub> = √(<span class="frac"><span>4<i>A</i></span><span>π</span></span>) ≈ 13.4 mm</strong></div>
+<p><strong>这不是量产泄压阀选型结论。</strong> 真实电芯喷气可能高温、可压缩、瞬态甚至局部临界流；阀片开启有迟滞，滤网、转弯、导流罩、冷凝液和固体颗粒都会改变有效流通面积。工程必须使用电芯喷发的<i>ṁ</i>(<i>t</i>)、温度、组分、颗粒负载，结合阀门流量曲线、结构与CFD验证。</p>
+<p>在同一简化公式中，如果积尘让有效面积减半，而仍要排出相同质量流量，所需压差按1/<i>A</i><sup>2</sup>趋势约增加4倍，即从5 kPa变为约20 kPa；此时不可压缩近似已经变差，<strong>四倍只用于解释堵塞敏感性，不能当成精确预测</strong>。</p>
+<h3>05｜一个经常被忽略的反直觉：压力传感器可能在“最畅通的排气系统”中失灵</h3>
+<p>包内压力是“产气−排气−温度变化”的结果，而不是产气量本身：</p>
+<div class="eq"><span class="frac"><span>d<i>P</i></span><span>d<i>t</i></span></span> ≈ <span class="frac"><span><i>RT</i></span><span><i>V</i></span></span> (<i>ṅ</i><sub>gen</sub> − <i>ṅ</i><sub>out</sub>) + <span class="frac"><span><i>nR</i></span><span><i>V</i></span></span> <span class="frac"><span>d<i>T</i></span><span>d<i>t</i></span></span></div>
+<p>这条简化集总式忽略了非均匀温场与容积弹性。若泄压通道非常通畅，<i>ṅ</i><sub>out</sub> ≈ <i>ṅ</i><sub>gen</sub>，压力峰值可能很低；但高温、有毒、可燃气体仍然存在。已有Amphenol相关专利也明确讨论了低SOC或缓慢排气时，压力传感器可能不敏感的问题。[P1]</p>
+<p>因此建议至少分离三个观测量：<strong>压差及其变化率</strong>（结构风险/喷发速度）、<strong>气体组分与浓度趋势</strong>（化学异常）、<strong>温度/电压/绝缘/电流残差</strong>（电芯与系统状态）。单个压力阈值不能同时覆盖早期预警与泄压安全。</p>
+<h3>06｜气体检测的量化盲区：6000 ppm看起来很大，但传感器仍可能“看不见”</h3>
+<p>假设40 L隔舱、300 K、约1 atm，气体近似均匀混合且尚未泄压：原有空气约1.63 mol。若额外进入0.010 mol某种示踪气体，理想体积分数约0.61%，即约 <strong>6100 ppm</strong>；若只有0.001 mol，则约 <strong>610 ppm</strong>。这只是理想混合上限示意，实际取决于气体在排气通道的输运、局部稀释与传感器位置。</p>
+<p>预警延迟可以拆成：</p>
+<div class="eq"><i>t</i><sub>alarm</sub> ≈ <i>t</i><sub>transport</sub> + <i>t</i><sub>mix</sub> + <i>t</i><sub>sensor</sub> + <i>t</i><sub>logic</sub></div>
+<p>若气体沿1.5 m有效路径以0.2 m/s运动，纯对流输运已需7.5 s；若传感器再需5 s达到算法可检测水平，总延迟至少约12.5 s，还未计入混合与软件滤波。<strong>在前述NCM高SOC试验的7 s窗口下，这种布置不能保证在热失控前报警。</strong></p>
+<p>CO₂ NDIR可能受环境基线与水汽影响；MOS类VOC/H₂传感器可能存在交叉敏感、污染与漂移；电化学CO传感器还需关注寿命、温度和恢复时间。传感器选择必须从目标化学体系、传输路径、故障覆盖和量产维护周期反推。[S2][S5]</p>
+<h3>07｜多源诊断：别把“早期预警”和“热失控确认”混成一个DTC</h3>
+<p>建议状态机分为四层：<strong>S0 正常、S1 可疑产气、S2 高可信热事件、S3 已喷发/传播风险</strong>。S1由气体浓度斜率或多通道微弱异常触发，但允许带条件复核；S2需要多证据或高严重度单证据，并触发充电禁止、热管理安全动作、乘员提示及整车安全策略；S3应进入经安全分析确定的紧急响应。<strong>不能为了避免误报而延迟必要的危险报警。</strong></p>
+<p>可建立物理一致性残差：<i>r</i><sub>P</sub> = <i>Ṗ</i><sub>meas</sub> − <i>Ṗ</i><sub>model</sub>，并联合气体浓度变化、局部温度斜率、Cell电压异常和传感器健康度。以下是工程假设，不是某量产车型已验证逻辑。</p>
+<table>
+<thead>
+<tr>
+<th>观测组合</th>
+<th>优先怀疑</th>
+<th>诊断下一步</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>气体↑、压力↑、温度↑</td>
+<td>高可信排气/热事件</td>
+<td>立即进入高等级响应；记录事件时序</td>
+</tr>
+<tr>
+<td>气体↑、压力≈常态</td>
+<td>泄压通畅、慢排气或压力盲区</td>
+<td>检查气体空间一致性，不能因无升压而忽略</td>
+</tr>
+<tr>
+<td>压力↑、气体≈基线</td>
+<td>热胀、海拔/外压变化、传感器异常或气体未到达</td>
+<td>用内外压差、温度模型及第二测点交叉验证</td>
+</tr>
+<tr>
+<td>气体局部↑、远端不变</td>
+<td>局部排气、路径遮挡或传感器故障</td>
+<td>比较到达时差与通道拓扑</td>
+</tr>
+<tr>
+<td>压力异常持续、阀门未有预期响应</td>
+<td>泄压路径堵塞/阀片卡滞或测量故障</td>
+<td>不依赖软件主动开启作为唯一保护，检查机械冗余</td>
+</tr>
+</tbody>
+</table>
+<h3>08｜与真实量产架构的关系：机械泄压是被动安全，BMS是主动补充</h3>
+<p>建议把系统分成三个独立但协同的安全层。<strong>Cell层</strong>：电芯防爆阀、单体间隔热和喷射方向约束；<strong>Pack层</strong>：排气汇流通道、被动泄压、热防护、排放出口远离乘员舱与高压敏感部件、排气后的绝缘维持；<strong>BMS/整车层</strong>：气体/压差/温度/电压融合、报警、充电禁止、受控停车与HV安全动作。</p>
+<p>高压接触器断开只能切断外部电能通路，<strong>不能终止已经发生的电芯内部放热反应</strong>。任何主动阀或风机策略均应有失电安全行为，不应使机械被动泄压依赖MCU、CAN或12 V电源。排气出口位置还要考虑底盘托底、涉水、盐雾、泥沙、碎石、洗车、整车碰撞和乘员舱HVAC进气口。</p>
+<p>GB 38031—2025于2026年7月1日起实施。官方解读明确：热扩散试验要求从旧版的“着火、爆炸前5分钟报警”提高为<strong>不起火、不爆炸（仍需报警），烟气不对乘员造成伤害</strong>；还新增底部撞击和快充循环后安全测试。[S1] <strong>该标准针对规定的试验边界，不能解释成车辆全寿命任何事故都绝对不会起火。</strong> UL 9540A:2026则面向固定式储能系统的热失控传播试验，不能拿来替代车用动力电池GB 38031认证。[S6]</p>
+<h3>09｜工程设计窗口：真正要优化的不是“泄压面积最大化”</h3>
+<p>泄压口太小，峰值压力、结构载荷和高温气体回流风险上升；泄压口过大，则防水防尘、密封耐久、隔音、空间布置、碰撞防护与火焰外喷方向可能变差。更大的口也不必然使热失控传播更少：局部氧气供给、喷流冲刷和外部点火风险会随布置变化。</p>
+<p>至少联合优化：<i>V</i><sub>free</sub>、<i>ṁ</i><sub>peak</sub>、阀门开启压差、<i>C</i><sub>d</sub><i>A</i>、喷射温度、固体颗粒、排气方向、气体传感器T90、乘员舱泄漏率和包体允许应力。2024年LFP模组排气CFD研究显示，不同电芯布置与侧/底部排气方案会显著改变气体积累，说明“相同泄压总面积”也可能得到不同安全结果。[S4]</p>
+<h3>10｜失效模式与DOE：必须故意制造“传感器失效”和“通道堵塞”</h3>
+<p>建议在受控实验设施内分级开展：单体量热/产气组分与速率测量→模组喷发→包体泄压/结构→整车乘员舱烟气路径。试验条件覆盖LFP/NCM、低/高SOC、老化、低/高环境温度、不同触发方式、车辆姿态、泥沙/结冰/积水、阀片公差、排气口部分堵塞、单点传感器断线/漂移、12 V掉电和CAN中断。涉及热失控和可燃气体的实验必须由具备防爆、排风与远程操作条件的专业团队执行。</p>
+<p>每个测试至少记录：Cell电压、表面/关键结构温度、内外压差（高频）、阀片位移或开启事件、气体组分与浓度（记录响应时间）、质量损失、喷流高速影像、排气口温度、包体应变、乘员舱采样、绝缘状态、报警时刻和执行器动作。</p>
+<p>验收应关注<strong>误报率、漏报率、最差报警提前量、阀口有效流通面积退化、峰值超压、排气热冲击、乘员舱烟气暴露与单故障覆盖率</strong>。尤其应记录“真实产气开始”到“BMS报警”的时间，而不只记录“开阀”到“报警”的时间；不同真值定义不可混用。</p>
+<h3>11｜可专利化创新点 / Patent Ideas</h3>
+<p><strong>Idea A｜泄压通道的“声学回波＋自然压差”双模无损健康诊断。</strong> ①**痛点：<strong>车辆多年使用后泥沙、冰堵、变形可能降低主排气通道有效面积，常规BMS直到热事件才知道。②</strong>方案：<strong>在不打开防爆阀、不人为增压电池包的前提下，利用低能声学脉冲/扫频检测泄压通道反射谱，并利用日常气压/温度变化下的内外压差响应辨识低压均压路径阻抗；两种指纹联合推断堵塞位置与严重度。③</strong>差异化：<strong>不是单一压力阈值或泄压报警，而是把“主排气通道声学阻塞”与“低压均压路径阻抗”分开诊断。④</strong>实现：<strong>微型压电换能器、MEMS麦克风、内外压差与温度传感器、EOL声学基线、车速/振动噪声门控。⑤</strong>权利要求抓手：<strong>基于声学传播特征和自然热压激励的双域退化识别、按通道拓扑定位、阈值与可信度自适应、无危险主动开阀。⑥</strong>检索：**battery vent acoustic reflectometry; pressure relief duct blockage diagnostics; passive barometric leak identification；IPC/CPC：G01N29/00、G01M3/26、H01M50/30。**边界：**自然压差只能辨识低压通道，不能单独证明大流量防爆阀在高温喷发时一定可开启，必须用型式试验校准。</p>
+<p><strong>Idea B｜“气体到达时差＋压力波残差”的热源位置与泄压路径联合估计。</strong> ①**痛点：<strong>单点CO₂或压力传感器难以区分远端热事件、阀口堵塞和传感器漂移，导致定位与故障响应不确定。②</strong>方案：<strong>在排气汇流通道布置少量异构传感器，利用H₂/CO/VOC的到达顺序、压差波形与已知流道拓扑，估计产气位置及有效排气阻抗；当“气体前锋到达”与“压力释放”不一致时，将其标记为可能的流道退化而非简单增加报警等级。③</strong>差异化：<strong>从多传感器阈值投票提升为“来源定位＋流道健康”联合反演，并显式管理传感器响应时间与流向变化。④</strong>实现：<strong>分区气体传感器、差压点、通道数字孪生、时间戳同步、传感器T90在线校正。⑤</strong>权利要求抓手：<strong>基于气体到达时间差与压力残差的联合反演、不可观测条件下的置信度降级、与被动泄压结构的协同诊断。⑥</strong>检索：**vent gas time-of-arrival localization; battery pack gas path fault inversion; pressure-gas joint observer；IPC/CPC：G01N33/00、G01R31/36、H01M50/30、B60L58/10。</p>
+<p><strong>现有技术对照。</strong> US11942613B2已涉及H₂/压力等多传感器热失控检测；US11936012B2涉及包内多点温度与泄压阀；EP4661183A1涉及具有声学警示结构的泄压阀。因此，<strong>“多传感器检测”“压力报警”“泄压发声”本身不是这里的新颖性主张</strong>；真正待验证的是无损通道声学反射诊断与自然压差双域辨识，以及气体到达时差与压力波联合反演的具体技术组合。[P1][P2][P3]</p>
+<p><strong>专利声明：以上仅为潜在专利构思/研发创意，尚未完成全球新颖性检索、权利要求比对或FTO，不能直接声称可授权。</strong></p>
+<h3>12｜今日工程结论</h3>
+<p><strong>第一，开阀、热失控和热扩散是三个不同的时间点。</strong> 某些LFP试验中气体有较长提前量，但NCM高SOC实验也可能只有数秒，预警窗口必须按化学体系与最差工况验证。</p>
+<p><strong>第二，泄压阀“存在”不代表泄压“有效”。</strong> 必须掌握峰值产气率、有效流通面积、阀门开启行为、堵塞敏感性和喷流热风险；压力没升不代表没有气体。</p>
+<p><strong>第三，气体、压差、温度、电压应各司其职。</strong> 气体擅长发现化学异常，压差更直接反映结构负载与流动，温度/电压帮助判定电芯状态；多证据融合不能牺牲危险报警时效。</p>
+<p><strong>第四，GB 38031—2025将设计目标从“提前报警”推进到规定试验中的“不起火、不爆炸、烟气不伤乘员”。</strong> 这需要Cell、Pack、BMS和整车EE架构协同，而不是靠某一个气体传感器或某一只泄压阀。</p>
+<h3>来源与日期｜2026-10-09 核查</h3>
+<ul>
+<li><strong>[S1]</strong> 国务院/工信部新国标解读，2025-04-17；GB 38031—2025自2026-07-01实施。<a href="https://app.www.gov.cn/govdata/gov/202504/17/526982/article.html" rel="noopener" target="_blank">https://app.www.gov.cn/govdata/gov/202504/17/526982/article.html</a></li>
+<li><strong>[S2]</strong> 张子静等，《储能科学与技术》2025, 14(7):2820–2832，发表2025-07-11；LFP/NCM排气与预警对照。<a href="https://esst.cip.com.cn/EN/Y2025/V14/I7/2820" rel="noopener" target="_blank">https://esst.cip.com.cn/EN/Y2025/V14/I7/2820</a></li>
+<li><strong>[S3]</strong> <em>Journal of Power Sources</em> 615 (2024) 235064，圆柱电芯热失控喷气速度/温度定量。<a href="https://doi.org/10.1016/j.jpowsour.2024.235064" rel="noopener" target="_blank">https://doi.org/10.1016/j.jpowsour.2024.235064</a></li>
+<li><strong>[S4]</strong> Zhang等，<em>Batteries</em> 10 (2024) 176，LFP模组排气CFD与结构方案。<a href="https://doi.org/10.3390/batteries10060176" rel="noopener" target="_blank">https://doi.org/10.3390/batteries10060176</a></li>
+<li><strong>[S5]</strong> <em>eTransportation</em> 26 (2025) 100502，气体传感器热失控预警综述，2025-12。<a href="https://doi.org/10.1016/j.etran.2025.100502" rel="noopener" target="_blank">https://doi.org/10.1016/j.etran.2025.100502</a></li>
+<li><strong>[S6]</strong> ANSI/CAN/UL 9540A:2026，发布2026-03-13，固定式储能系统热失控传播测试（<strong>非车用GB认证替代</strong>）。<a href="https://webstore.ansi.org/standards/ul/ansiul9540a2026" rel="noopener" target="_blank">https://webstore.ansi.org/standards/ul/ansiul9540a2026</a></li>
+<li><strong>[S7]</strong> <em>Energies</em> 16 (2023) 7874，密闭舱排气量/速率拟合方法。<a href="https://doi.org/10.3390/en16237874" rel="noopener" target="_blank">https://doi.org/10.3390/en16237874</a></li>
+<li><strong>[P1]</strong> US11942613B2，<em>Thermal runaway detection system for batteries within enclosures</em>，2024。<a href="https://patents.google.com/patent/US11942613B2/en" rel="noopener" target="_blank">https://patents.google.com/patent/US11942613B2/en</a></li>
+<li><strong>[P2]</strong> US11936012B2，<em>Abnormality detection device for battery pack</em>，2024。<a href="https://patents.google.com/patent/US11936012B2/en" rel="noopener" target="_blank">https://patents.google.com/patent/US11936012B2/en</a></li>
+<li><strong>[P3]</strong> EP4661183A1，<em>Pressure relief valve and battery pack</em>，2025。<a href="https://patents.google.com/patent/EP4661183A1/en" rel="noopener" target="_blank">https://patents.google.com/patent/EP4661183A1/en</a></li>
+</ul>
+<p><em>用途说明：本期用于研发学习和工程评审；所有算例均为显式假设，不能替代实测、法规原文核查、型式试验、安全分析或专利法律意见。</em></p>
+</article><div class="footer">动力电池技术日报 · 第13期 · 2026-10-09　｜　本文及公式离线可读；算例不是量产设计认证值。</div></main></body></html>
