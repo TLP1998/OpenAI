@@ -1,0 +1,91 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>动力电池技术日报 第10期 历史补档重制</title><style>
+:root{--ink:#172235;--blue:#0d4f8b;--blue2:#eaf3fb;--red:#b72a2a;--line:#cbd6e2;--muted:#5e6b78;--paper:#f8f6f0}
+*{box-sizing:border-box} body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.page{max-width:1120px;margin:0 auto;background:white;padding:28px 34px 42px;box-shadow:0 2px 18px #0001}
+header{display:grid;grid-template-columns:1fr 300px;gap:24px;border-bottom:4px solid var(--ink);padding-bottom:16px}
+.kicker{font-size:14px;letter-spacing:.15em;color:var(--blue);font-weight:700}
+h1{font-size:36px;line-height:1.18;margin:8px 0 8px} .sub{color:var(--muted);font-size:15px}
+.guide{background:var(--blue2);border:1px solid #9eb9d3;padding:14px 16px;border-radius:8px}.guide h3{margin:0 0 8px;color:var(--blue)}
+.guide ol{margin:0;padding-left:20px;font-size:14px;line-height:1.65}
+.note{margin:18px 0;padding:12px 14px;border-left:4px solid #7d8793;background:#f5f7f9;color:#4b5864;font-size:14px}
+section{margin-top:22px}.sec-title{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+.num{background:var(--blue);color:white;width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700}
+h2{font-size:23px;margin:0}.lead{font-weight:700;color:#243649}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:#fbfcfe;border:1px solid var(--line);border-radius:8px;padding:14px}.card h3{margin:0 0 8px;font-size:17px;color:var(--blue)}
+.formula{margin:14px 0;background:#f8fbff;border:1px solid #bad0e4;border-radius:8px;text-align:center;padding:14px;font-family:Cambria,"Times New Roman",serif;font-size:22px}
+.result{border-left:5px solid var(--red);background:#fff4f2;padding:12px 14px;margin:12px 0;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px} th,td{border:1px solid #cfd8e1;padding:8px 9px;text-align:left;vertical-align:top} th{background:#edf4fa;color:#173f66}
+.fig{margin:8px 0 14px;padding:10px;border:1px solid #d6dee6;background:#fff;border-radius:8px}.fig img{display:block;width:100%;max-height:330px;object-fit:contain}.fig figcaption{font-size:13px;color:#566473;margin-top:6px}.save{font-size:12px;color:#0d4f8b;text-decoration:none}
+.patent{border:1px solid #c9b778;background:#fffdf4;padding:15px;border-radius:8px}.patent h3{margin-top:0;color:#6d5610}
+.refs li{margin:6px 0;word-break:break-all}.footer{margin-top:28px;padding-top:14px;border-top:2px solid var(--ink);font-size:12px;color:#67727d}
+@media(max-width:760px){.page{padding:20px 16px}header{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}h1{font-size:29px}.fig img{max-height:260px}}
+</style></head><body><main class="page">
+<header><div><div class="kicker">动力电池技术日报 · 历史补档重制</div><h1>EMC磁环与共模扼流：为什么一个磁环能救测试，也可能制造新谐振</h1>
+<div class="sub">第10期｜技术精读 / 工程评审材料｜重制日期：2026-10-13</div></div>
+<div class="guide"><h3>本期导读</h3><ol><li>磁环到底滤什么</li><li>共模/差模磁通机理</li><li>SiC高dv/dt回流路径</li><li>选型看阻抗频段而非只看μH</li><li>安装位置为何决定效果</li><li>BCI/发射A-B测试</li><li>Patent Idea：可调共模阻抗</li></ol></div></header>
+<div class="note">说明：原第10期 HTML 附件未能从历史文件中恢复。本文件为 2026-10-13 按当前固定版式重新制作的“历史补档重制版”，用于补齐第8–10期阅读档案；不视为国庆假期正式工作日报发送记录。</div>
+
+<section><div class="sec-title"><div class="num">1</div><h2>磁环到底在“滤什么”？</h2></div>
+<p>在两根正负线或差分通信线上同时穿过同一磁芯时，差模电流方向相反，磁通大部分抵消；共模电流方向相同，磁通叠加，因此磁芯主要对共模噪声呈现较高阻抗。这就是共模扼流圈或套磁环的核心物理基础。</p>
+
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiB2aWV3Qm94PSIwIDAgOTAwIDM0MCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiBmaWxsPSIjZjhmYmZmIi8+PHRleHQgeD0iMzUiIHk9IjM1IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj7no4Hnjq8v5YWx5qih5om85rWB5ZyI77ya5Y+q6Zi74oCc5YWx5qih4oCd77yM5bC96YeP5LiN5b2x5ZON5beu5qihPC90ZXh0Pgo8cGF0aCBkPSJNODAgMTIwIEg4MjAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTgwIDIyMCBIODIwIiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPgo8ZWxsaXBzZSBjeD0iNDUwIiBjeT0iMTcwIiByeD0iOTUiIHJ5PSIxMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2E0NjcxOSIgc3Ryb2tlLXdpZHRoPSIyOCIvPgo8cGF0aCBkPSJNMTMwIDEyMCBDMTgwIDcwLDIzMCA3MCwyODAgMTIwIiBmaWxsPSJub25lIiBzdHJva2U9IiNiNzJhMmEiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik0xMzAgMjIwIEMxODAgMjcwLDIzMCAyNzAsMjgwIDIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjcyYTJhIiBzdHJva2Utd2lkdGg9IjMiLz4KPHRleHQgeD0iMTYwIiB5PSI5MiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2I3MmEyYSI+5beu5qih77ya5Lik57q/55S15rWB5pa55ZCR55u45Y+NIOKGkiDno4HpgJrmirXmtog8L3RleHQ+CjxwYXRoIGQ9Ik02MTAgOTUgQzY2MCA1NSw3MTAgNTUsNzYwIDk1IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjdmNDkiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik02MTAgMTk1IEM2NjAgMTU1LDcxMCAxNTUsNzYwIDE5NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2Y3ZjQ5IiBzdHJva2Utd2lkdGg9IjMiLz4KPHRleHQgeD0iNTkwIiB5PSIyODUiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMzZjdmNDkiPuWFseaooe+8muS4pOe6v+WQjOWQkSDihpIg56OB6YCa5Y+g5YqgIOKGkiDpq5jpopHpmLvmipfkuIrljYc8L3RleHQ+Cjwvc3ZnPg==" alt="磁环的共模/差模机理"/>
+      <figcaption><b>磁环的共模/差模机理</b>｜两线同时穿芯时，目标是提升共模阻抗，同时尽量不改变正常差模信号。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiB2aWV3Qm94PSIwIDAgOTAwIDM0MCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiBmaWxsPSIjZjhmYmZmIi8+PHRleHQgeD0iMzUiIHk9IjM1IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj7no4Hnjq8v5YWx5qih5om85rWB5ZyI77ya5Y+q6Zi74oCc5YWx5qih4oCd77yM5bC96YeP5LiN5b2x5ZON5beu5qihPC90ZXh0Pgo8cGF0aCBkPSJNODAgMTIwIEg4MjAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTgwIDIyMCBIODIwIiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPgo8ZWxsaXBzZSBjeD0iNDUwIiBjeT0iMTcwIiByeD0iOTUiIHJ5PSIxMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2E0NjcxOSIgc3Ryb2tlLXdpZHRoPSIyOCIvPgo8cGF0aCBkPSJNMTMwIDEyMCBDMTgwIDcwLDIzMCA3MCwyODAgMTIwIiBmaWxsPSJub25lIiBzdHJva2U9IiNiNzJhMmEiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik0xMzAgMjIwIEMxODAgMjcwLDIzMCAyNzAsMjgwIDIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjcyYTJhIiBzdHJva2Utd2lkdGg9IjMiLz4KPHRleHQgeD0iMTYwIiB5PSI5MiIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2I3MmEyYSI+5beu5qih77ya5Lik57q/55S15rWB5pa55ZCR55u45Y+NIOKGkiDno4HpgJrmirXmtog8L3RleHQ+CjxwYXRoIGQ9Ik02MTAgOTUgQzY2MCA1NSw3MTAgNTUsNzYwIDk1IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjdmNDkiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik02MTAgMTk1IEM2NjAgMTU1LDcxMCAxNTUsNzYwIDE5NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2Y3ZjQ5IiBzdHJva2Utd2lkdGg9IjMiLz4KPHRleHQgeD0iNTkwIiB5PSIyODUiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMzZjdmNDkiPuWFseaooe+8muS4pOe6v+WQjOWQkSDihpIg56OB6YCa5Y+g5YqgIOKGkiDpq5jpopHpmLvmipfkuIrljYc8L3RleHQ+Cjwvc3ZnPg==" download="磁环的共模/差模机理.svg">保存此图</a>
+    </figure>
+    
+<div class="formula">Z<sub>CM</sub>(f) ≈ R<sub>loss</sub>(f) + jωL<sub>CM</sub>(f)</div>
+<p>实际高频下磁芯不是理想电感，材料损耗会使阻抗包含明显的电阻性部分，这往往正是抑制高频共模噪声所希望的。</p></section>
+
+<section><div class="sec-title"><div class="num">2</div><h2>为什么800V SiC平台更依赖“回流路径设计”？</h2></div>
+<div class="grid2"><div><p>SiC开关边沿的高dv/dt通过寄生电容形成位移电流：</p>
+<div class="formula">i<sub>CM</sub> = C<sub>p</sub> · dv/dt</div>
+<p>例如有效寄生电容20 pF、dv/dt=20 V/ns，则瞬时共模位移电流量级约：</p>
+<div class="formula">i ≈ 20 pF × 20 V/ns = 0.4 A</div>
+<p>磁环不是“消灭噪声”，而是通过提高某些频段阻抗，把共模电流重新约束到更可控的路径。</p></div>
+<div>
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiB2aWV3Qm94PSIwIDAgOTAwIDMzMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iMzUiIHk9IjM4IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj44MDBW5bmz5Y+w55qE5YW45Z6L5YWx5qih55S15rWB5Zue6LevPC90ZXh0Pgo8cmVjdCB4PSI1NSIgeT0iMTEwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjgwIiByeD0iMTIiIGZpbGw9IiNlYWYzZmIiIHN0cm9rZT0iIzBkNGY4YiIvPjx0ZXh0IHg9IjEzMCIgeT0iMTQ1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4Ij5TaUPpgIblj5jlmag8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPumrmGR2L2R0PC90ZXh0Pgo8cmVjdCB4PSIzNTUiIHk9IjExMCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI4MCIgcng9IjEyIiBmaWxsPSIjZjVmNWY1IiBzdHJva2U9IiM2ZDc4ODIiLz48dGV4dCB4PSI0NDAiIHk9IjE0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+5a+E55Sf55S15a65PC90ZXh0Pjx0ZXh0IHg9IjQ0MCIgeT0iMTY4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE0Ij7lmajku7Yv5pWj54Ot5ZmoL+e6v+adnzwvdGV4dD4KPHJlY3QgeD0iNjkwIiB5PSIxMTAiIHdpZHRoPSIxNTAiIGhlaWdodD0iODAiIHJ4PSIxMiIgZmlsbD0iI2VlZjdlZiIgc3Ryb2tlPSIjM2Y3ZjQ5Ii8+PHRleHQgeD0iNzY1IiB5PSIxNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTgiPui9pui6qy/lsY/olL08L3RleHQ+PHRleHQgeD0iNzY1IiB5PSIxNjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPuWbnua1gei3r+W+hDwvdGV4dD4KPHBhdGggZD0iTTIwNSAxNTAgSDM1NSIgc3Ryb2tlPSIjYjcyYTJhIiBzdHJva2Utd2lkdGg9IjQiIG1hcmtlci1lbmQ9InVybCgjYSkiLz48cGF0aCBkPSJNNTI1IDE1MCBINjkwIiBzdHJva2U9IiNiNzJhMmEiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNNzY1IDIyMCBIMTMwIFYxOTAiIHN0cm9rZT0iI2I3MmEyYSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+Cjx0ZXh0IHg9IjQzMCIgeT0iMjYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2IiBmaWxsPSIjNTM2MDZkIj7lpoLmnpzlm57mtYHot6/lvoTkuI3lj5fmjqfvvIzlhbHmqKHnlLXmtYHkvJrlr7vmib5CTVPpgJrkv6HjgIHkvKDmhJ/lmajlnLDjgIHlsY/olL3lsYLnrYnigJzmhI/lpJbpgJrpgZPigJ08L3RleHQ+Cjwvc3ZnPg==" alt="共模回流路径"/>
+      <figcaption><b>共模回流路径</b>｜EMC问题本质是高频电流从哪里出去、又从哪里回来。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiB2aWV3Qm94PSIwIDAgOTAwIDMzMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iMzUiIHk9IjM4IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj44MDBW5bmz5Y+w55qE5YW45Z6L5YWx5qih55S15rWB5Zue6LevPC90ZXh0Pgo8cmVjdCB4PSI1NSIgeT0iMTEwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjgwIiByeD0iMTIiIGZpbGw9IiNlYWYzZmIiIHN0cm9rZT0iIzBkNGY4YiIvPjx0ZXh0IHg9IjEzMCIgeT0iMTQ1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4Ij5TaUPpgIblj5jlmag8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPumrmGR2L2R0PC90ZXh0Pgo8cmVjdCB4PSIzNTUiIHk9IjExMCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI4MCIgcng9IjEyIiBmaWxsPSIjZjVmNWY1IiBzdHJva2U9IiM2ZDc4ODIiLz48dGV4dCB4PSI0NDAiIHk9IjE0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+5a+E55Sf55S15a65PC90ZXh0Pjx0ZXh0IHg9IjQ0MCIgeT0iMTY4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE0Ij7lmajku7Yv5pWj54Ot5ZmoL+e6v+adnzwvdGV4dD4KPHJlY3QgeD0iNjkwIiB5PSIxMTAiIHdpZHRoPSIxNTAiIGhlaWdodD0iODAiIHJ4PSIxMiIgZmlsbD0iI2VlZjdlZiIgc3Ryb2tlPSIjM2Y3ZjQ5Ii8+PHRleHQgeD0iNzY1IiB5PSIxNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTgiPui9pui6qy/lsY/olL08L3RleHQ+PHRleHQgeD0iNzY1IiB5PSIxNjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPuWbnua1gei3r+W+hDwvdGV4dD4KPHBhdGggZD0iTTIwNSAxNTAgSDM1NSIgc3Ryb2tlPSIjYjcyYTJhIiBzdHJva2Utd2lkdGg9IjQiIG1hcmtlci1lbmQ9InVybCgjYSkiLz48cGF0aCBkPSJNNTI1IDE1MCBINjkwIiBzdHJva2U9IiNiNzJhMmEiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNNzY1IDIyMCBIMTMwIFYxOTAiIHN0cm9rZT0iI2I3MmEyYSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+Cjx0ZXh0IHg9IjQzMCIgeT0iMjYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2IiBmaWxsPSIjNTM2MDZkIj7lpoLmnpzlm57mtYHot6/lvoTkuI3lj5fmjqfvvIzlhbHmqKHnlLXmtYHkvJrlr7vmib5CTVPpgJrkv6HjgIHkvKDmhJ/lmajlnLDjgIHlsY/olL3lsYLnrYnigJzmhI/lpJbpgJrpgZPigJ08L3RleHQ+Cjwvc3ZnPg==" download="共模回流路径.svg">保存此图</a>
+    </figure>
+    </div></div></section>
+
+<section><div class="sec-title"><div class="num">3</div><h2>为什么“套一个磁环”有时有效，有时完全没用？</h2></div>
+<table><tr><th>现象</th><th>可能原因</th></tr>
+<tr><td>某频段下降明显</td><td>磁芯阻抗峰值与共模噪声频段匹配</td></tr>
+<tr><td>低频几乎无改善</td><td>磁芯在该频段阻抗不足</td></tr>
+<tr><td>高频反而变差</td><td>磁芯寄生电容/线束电感形成新的谐振</td></tr>
+<tr><td>通信波形畸变</td><td>差模漏感过大、器件不适配数据链路</td></tr>
+<tr><td>更换安装位置后效果完全不同</td><td>真正决定效果的是整条共模回路，而非器件单体参数</td></tr></table>
+<p>TDK在汽车以太网测试中展示了不同共模滤波器在辐射、传导和BCI上的差异，这说明选型要看频率曲线和实际系统测试，而不是只看“多少μH”。</p></section>
+
+<section><div class="sec-title"><div class="num">4</div><h2>磁环选型的工程窗口</h2></div>
+<div class="grid3"><div class="card"><h3>频段</h3><p>先用电流探头/近场探头找到主要噪声频段，再选材料与尺寸。</p></div>
+<div class="card"><h3>饱和/偏置</h3><p>若两线不完全对称或存在直流不平衡，磁芯可能承受偏置磁通。</p></div>
+<div class="card"><h3>温度</h3><p>磁导率和损耗随温度变化，车规温度范围要验证阻抗保持。</p></div></div>
+<p>对高压动力线的大电流磁环，还要关注机械固定、绝缘距离、振动以及线束弯折带来的装配一致性。</p></section>
+
+<section><div class="sec-title"><div class="num">5</div><h2>测试建议：用“加磁环前后差分”定位共模问题</h2></div>
+<p>工程上磁环不仅是整改件，也可以是诊断工具。建议在BCI/ALSE/传导发射测试中记录：</p>
+<table><tr><th>变量</th><th>建议</th></tr>
+<tr><td>磁芯材料/尺寸</td><td>至少2–3种阻抗频段不同的样件</td></tr>
+<tr><td>穿芯匝数</td><td>1匝/2匝对比，注意寄生电容上升</td></tr>
+<tr><td>安装位置</td><td>靠近噪声源、靠近负载、靠近连接器分别测试</td></tr>
+<tr><td>线束组合</td><td>HV+/HV−一起穿芯 vs 单线穿芯，区分共模/差模影响</td></tr>
+<tr><td>判据</td><td>不仅看频谱，还看BMS误码、测量误差和器件温升</td></tr></table></section>
+
+<section><div class="sec-title"><div class="num">6</div><h2>可专利化创新点 / Patent Ideas</h2></div>
+<div class="patent"><h3>Idea A｜可调共模阻抗的“分段磁芯 + 频谱反馈”线束模块</h3>
+<p><b>痛点：</b>固定磁环只能针对有限频段，SiC开关策略、线束状态和工况变化会移动主要噪声频段。</p>
+<p><b>构思：</b>在高压线束模块中组合两种不同材料磁芯，并通过可控旁路导体/辅助绕组改变等效共模阻抗；BMS或EMC监测节点根据频谱风险选择状态。</p>
+<p><b>差异化：</b>从被动固定磁芯变为工况自适应的共模阻抗塑形。</p>
+<p><b>实现：</b>分段磁芯、辅助绕组、低能控制、共模电流估计、状态机。</p>
+<p><b>潜在权利要求：</b>根据逆变器开关频率/共模电流指标动态改变线束共模阻抗。</p>
+<p><b>检索：</b>adaptive common-mode impedance automotive；tunable ferrite harness；IPC/CPC H03H7/00, H02M1/44。</p></div></section>
+
+<section><div class="sec-title"><div class="num">R</div><h2>参考资料</h2></div><ol class="refs"><li>TDK, <a href="https://product.tdk.com/en/techlibrary/applicationnote/automotive-ethernet.html">Automotive Ethernet EMC Countermeasures and Common-Mode Filters/Chokes</a>.</li><li>TDK, <a href="https://product.tdk.com/en/techlibrary/solutionguide/automotive_48v_solutions.html">CISPR 25 Conducted Emissions Countermeasures for Automotive Power Supply Systems</a>, updated 2026.</li></ol></section>
+<div class="footer">潜在专利构思仅供研发讨论，未完成完整 FTO / 全球新颖性检索，不保证可授权。高压与EMC试验需由具备资质的人员在受控环境下执行。</div>
+</main></body></html>
