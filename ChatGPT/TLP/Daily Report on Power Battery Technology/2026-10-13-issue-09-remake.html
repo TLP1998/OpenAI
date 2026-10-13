@@ -1,0 +1,94 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>动力电池技术日报 第9期 历史补档重制</title><style>
+:root{--ink:#172235;--blue:#0d4f8b;--blue2:#eaf3fb;--red:#b72a2a;--line:#cbd6e2;--muted:#5e6b78;--paper:#f8f6f0}
+*{box-sizing:border-box} body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.page{max-width:1120px;margin:0 auto;background:white;padding:28px 34px 42px;box-shadow:0 2px 18px #0001}
+header{display:grid;grid-template-columns:1fr 300px;gap:24px;border-bottom:4px solid var(--ink);padding-bottom:16px}
+.kicker{font-size:14px;letter-spacing:.15em;color:var(--blue);font-weight:700}
+h1{font-size:36px;line-height:1.18;margin:8px 0 8px} .sub{color:var(--muted);font-size:15px}
+.guide{background:var(--blue2);border:1px solid #9eb9d3;padding:14px 16px;border-radius:8px}.guide h3{margin:0 0 8px;color:var(--blue)}
+.guide ol{margin:0;padding-left:20px;font-size:14px;line-height:1.65}
+.note{margin:18px 0;padding:12px 14px;border-left:4px solid #7d8793;background:#f5f7f9;color:#4b5864;font-size:14px}
+section{margin-top:22px}.sec-title{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+.num{background:var(--blue);color:white;width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700}
+h2{font-size:23px;margin:0}.lead{font-weight:700;color:#243649}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:#fbfcfe;border:1px solid var(--line);border-radius:8px;padding:14px}.card h3{margin:0 0 8px;font-size:17px;color:var(--blue)}
+.formula{margin:14px 0;background:#f8fbff;border:1px solid #bad0e4;border-radius:8px;text-align:center;padding:14px;font-family:Cambria,"Times New Roman",serif;font-size:22px}
+.result{border-left:5px solid var(--red);background:#fff4f2;padding:12px 14px;margin:12px 0;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px} th,td{border:1px solid #cfd8e1;padding:8px 9px;text-align:left;vertical-align:top} th{background:#edf4fa;color:#173f66}
+.fig{margin:8px 0 14px;padding:10px;border:1px solid #d6dee6;background:#fff;border-radius:8px}.fig img{display:block;width:100%;max-height:330px;object-fit:contain}.fig figcaption{font-size:13px;color:#566473;margin-top:6px}.save{font-size:12px;color:#0d4f8b;text-decoration:none}
+.patent{border:1px solid #c9b778;background:#fffdf4;padding:15px;border-radius:8px}.patent h3{margin-top:0;color:#6d5610}
+.refs li{margin:6px 0;word-break:break-all}.footer{margin-top:28px;padding-top:14px;border-top:2px solid var(--ink);font-size:12px;color:#67727d}
+@media(max-width:760px){.page{padding:20px 16px}header{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}h1{font-size:29px}.fig img{max-height:260px}}
+</style></head><body><main class="page">
+<header><div><div class="kicker">动力电池技术日报 · 历史补档重制</div><h1>Pack电流传感：Shunt、Hall、Fluxgate如何覆盖mA到kA级动态范围</h1>
+<div class="sub">第9期｜技术精读 / 工程评审材料｜重制日期：2026-10-13</div></div>
+<div class="guide"><h3>本期导读</h3><ol><li>mA→kA级动态范围</li><li>Shunt的I²R与低流精度</li><li>零偏如何累积SOC误差</li><li>Hall/Fluxgate边界</li><li>双通道功能安全</li><li>量产全温全量程验证</li><li>Patent Idea：软交接融合</li></ol></div></header>
+<div class="note">说明：原第9期 HTML 附件未能从历史文件中恢复。本文件为 2026-10-13 按当前固定版式重新制作的“历史补档重制版”，用于补齐第8–10期阅读档案；不视为国庆假期正式工作日报发送记录。</div>
+
+<section><div class="sec-title"><div class="num">1</div><h2>为什么Pack电流传感器是BMS最容易被低估的核心器件？</h2></div>
+<p>动力电池电流测量同时服务于SOC积分、功率限制、SOH估计、过流保护、充放电计量和功能安全。TI指出HEV/EV系统可能需要覆盖从小于1 A的静置电流，到大于1000 A的牵引/快充电流，形成多数量级的测量跨度。</p>
+
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiB2aWV3Qm94PSIwIDAgOTAwIDM0MCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiBmaWxsPSIjZjhmYmZmIi8+PHRleHQgeD0iMzUiIHk9IjM1IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj7kuInnsbtQYWNr55S15rWB5rWL6YeP6Lev57q/PC90ZXh0Pgo8ZyBmb250LWZhbWlseT0iQXJpYWwiPgo8cmVjdCB4PSI1NSIgeT0iODUiIHdpZHRoPSIyMjAiIGhlaWdodD0iMTcwIiByeD0iMTIiIGZpbGw9IiNlZWY1ZmIiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iMTY1IiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjEiPlNodW50PC90ZXh0Pjx0ZXh0IHg9IjE2NSIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7nsr7luqYv57q/5oCn5aW9PC90ZXh0Pjx0ZXh0IHg9IjE2NSIgeT0iMTc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7pnIDpmpTnprvmtYvph488L3RleHQ+PHRleHQgeD0iMTY1IiB5PSIyMDYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTUiPknCslLmjZ/ogJc8L3RleHQ+CjxyZWN0IHg9IjM0MCIgeT0iODUiIHdpZHRoPSIyMjAiIGhlaWdodD0iMTcwIiByeD0iMTIiIGZpbGw9IiNmNWY3ZjkiIHN0cm9rZT0iIzZhNzY4MCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNDUwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjEiPkhhbGw8L3RleHQ+PHRleHQgeD0iNDUwIiB5PSIxNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTUiPuWkqeeEtumalOemuzwvdGV4dD48dGV4dCB4PSI0NTAiIHk9IjE3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNSI+6Zu254K55ryC56e7PC90ZXh0Pjx0ZXh0IHg9IjQ1MCIgeT0iMjA2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7luKblrr0v56OB5Zy65b2x5ZONPC90ZXh0Pgo8cmVjdCB4PSI2MjUiIHk9Ijg1IiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE3MCIgcng9IjEyIiBmaWxsPSIjZWVmOGVmIiBzdHJva2U9IiMzZjdmNDkiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjczNSIgeT0iMTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIxIj5GbHV4Z2F0ZTwvdGV4dD48dGV4dCB4PSI3MzUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNSI+6auY57K+5bqmICsg6ZqU56a7PC90ZXh0Pjx0ZXh0IHg9IjczNSIgeT0iMTc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7miJDmnKwv5L2T56ev5pu06auYPC90ZXh0Pjx0ZXh0IHg9IjczNSIgeT0iMjA2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7pgILlkIjorqHph48v5YaX5L2ZPC90ZXh0Pgo8L2c+PC9zdmc+" alt="Pack电流测量技术路线"/>
+      <figcaption><b>Pack电流测量技术路线</b>｜Shunt、Hall、Fluxgate各有优势，没有单一技术在精度、隔离、带宽、损耗、成本上全面占优。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiB2aWV3Qm94PSIwIDAgOTAwIDM0MCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzQwIiBmaWxsPSIjZjhmYmZmIi8+PHRleHQgeD0iMzUiIHk9IjM1IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj7kuInnsbtQYWNr55S15rWB5rWL6YeP6Lev57q/PC90ZXh0Pgo8ZyBmb250LWZhbWlseT0iQXJpYWwiPgo8cmVjdCB4PSI1NSIgeT0iODUiIHdpZHRoPSIyMjAiIGhlaWdodD0iMTcwIiByeD0iMTIiIGZpbGw9IiNlZWY1ZmIiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iMTY1IiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjEiPlNodW50PC90ZXh0Pjx0ZXh0IHg9IjE2NSIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7nsr7luqYv57q/5oCn5aW9PC90ZXh0Pjx0ZXh0IHg9IjE2NSIgeT0iMTc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7pnIDpmpTnprvmtYvph488L3RleHQ+PHRleHQgeD0iMTY1IiB5PSIyMDYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTUiPknCslLmjZ/ogJc8L3RleHQ+CjxyZWN0IHg9IjM0MCIgeT0iODUiIHdpZHRoPSIyMjAiIGhlaWdodD0iMTcwIiByeD0iMTIiIGZpbGw9IiNmNWY3ZjkiIHN0cm9rZT0iIzZhNzY4MCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNDUwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjEiPkhhbGw8L3RleHQ+PHRleHQgeD0iNDUwIiB5PSIxNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTUiPuWkqeeEtumalOemuzwvdGV4dD48dGV4dCB4PSI0NTAiIHk9IjE3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNSI+6Zu254K55ryC56e7PC90ZXh0Pjx0ZXh0IHg9IjQ1MCIgeT0iMjA2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7luKblrr0v56OB5Zy65b2x5ZONPC90ZXh0Pgo8cmVjdCB4PSI2MjUiIHk9Ijg1IiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE3MCIgcng9IjEyIiBmaWxsPSIjZWVmOGVmIiBzdHJva2U9IiMzZjdmNDkiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjczNSIgeT0iMTIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIxIj5GbHV4Z2F0ZTwvdGV4dD48dGV4dCB4PSI3MzUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNSI+6auY57K+5bqmICsg6ZqU56a7PC90ZXh0Pjx0ZXh0IHg9IjczNSIgeT0iMTc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7miJDmnKwv5L2T56ev5pu06auYPC90ZXh0Pjx0ZXh0IHg9IjczNSIgeT0iMjA2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE1Ij7pgILlkIjorqHph48v5YaX5L2ZPC90ZXh0Pgo8L2c+PC9zdmc+" download="Pack电流测量技术路线.svg">保存此图</a>
+    </figure>
+    
+</section>
+
+<section><div class="sec-title"><div class="num">2</div><h2>Shunt：高精度的代价是I²R损耗和隔离要求</h2></div>
+<div class="formula">V<sub>shunt</sub> = I · R<sub>shunt</sub></div>
+<p>若使用50 μΩ分流器，在1000 A时压降50 mV，损耗：</p>
+<div class="formula">P = I²R = 1000² × 50 μΩ = 50 W</div>
+<p>50 W并非不可接受，但必须考虑热漂移、母排散热、温升对阻值的影响。若将阻值减半以降低损耗，低电流时信号也减半，放大器失调误差相对占比上升。</p>
+<div class="result">因此Shunt设计本质是“高电流热损耗”和“低电流分辨率”的双向拉扯。</div></section>
+
+<section><div class="sec-title"><div class="num">3</div><h2>低电流为什么会成为SOC积分误差的主要来源？</h2></div>
+<div class="grid2"><div>
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzIwIiB2aWV3Qm94PSIwIDAgOTAwIDMyMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzIwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iMzUiIHk9IjM4IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj5CTVPnlLXmtYHph4/nqIvot6jluqbvvJrkvJHnnKBtQee6pyDihpIg5b+r5YWFL+mpseWKqGtB57qnPC90ZXh0Pgo8bGluZSB4MT0iODAiIHkxPSIxODAiIHgyPSI4MjAiIHkyPSIxODAiIHN0cm9rZT0iIzMxNDY1YSIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxnIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iIzBkNGY4YiIvPjx0ZXh0IHg9IjExMCIgeT0iMjE1Ij4wLjA1IEE8L3RleHQ+PHRleHQgeD0iMTEwIiB5PSIyNDAiPuS8keecoC/mvI/nlLU8L3RleHQ+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iIzBkNGY4YiIvPjx0ZXh0IHg9IjMwMCIgeT0iMjE1Ij4xMCBBPC90ZXh0Pjx0ZXh0IHg9IjMwMCIgeT0iMjQwIj7kvY7lip/ogJfotJ/ovb08L3RleHQ+CjxjaXJjbGUgY3g9IjUyMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iI2I3N2EwMCIvPjx0ZXh0IHg9IjUyMCIgeT0iMjE1Ij4zMDAgQTwvdGV4dD48dGV4dCB4PSI1MjAiIHk9IjI0MCI+5bi46KeE6amx5YqoPC90ZXh0Pgo8Y2lyY2xlIGN4PSI3OTAiIGN5PSIxODAiIHI9IjgiIGZpbGw9IiNiNzJhMmEiLz48dGV4dCB4PSI3OTAiIHk9IjIxNSI+MTAwMCsgQTwvdGV4dD48dGV4dCB4PSI3OTAiIHk9IjI0MCI+5bOw5YC8L+W/q+WFhTwvdGV4dD4KPC9nPjx0ZXh0IHg9IjQ1MCIgeT0iMTAwIiBmb250LXNpemU9IjE4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNTI2MDZkIj7ljZXkuIDph4/nqIvopoHlkIzml7bmu6HotrPpm7bmvILjgIHnur/mgKfjgIHluKblrr3jgIHng63mjZ/ogJflkozlip/og73lronlhajlhpfkvZnvvIzpnZ7luLjlm7Dpmr48L3RleHQ+PC9zdmc+" alt="电流量程跨度"/>
+      <figcaption><b>电流量程跨度</b>｜同一传感链路要覆盖休眠小电流和峰值大电流，动态范围要求极高。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzIwIiB2aWV3Qm94PSIwIDAgOTAwIDMyMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzIwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iMzUiIHk9IjM4IiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiIGZpbGw9IiMxMjNiNjIiIGZvbnQtd2VpZ2h0PSJib2xkIj5CTVPnlLXmtYHph4/nqIvot6jluqbvvJrkvJHnnKBtQee6pyDihpIg5b+r5YWFL+mpseWKqGtB57qnPC90ZXh0Pgo8bGluZSB4MT0iODAiIHkxPSIxODAiIHgyPSI4MjAiIHkyPSIxODAiIHN0cm9rZT0iIzMxNDY1YSIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxnIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iIzBkNGY4YiIvPjx0ZXh0IHg9IjExMCIgeT0iMjE1Ij4wLjA1IEE8L3RleHQ+PHRleHQgeD0iMTEwIiB5PSIyNDAiPuS8keecoC/mvI/nlLU8L3RleHQ+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iIzBkNGY4YiIvPjx0ZXh0IHg9IjMwMCIgeT0iMjE1Ij4xMCBBPC90ZXh0Pjx0ZXh0IHg9IjMwMCIgeT0iMjQwIj7kvY7lip/ogJfotJ/ovb08L3RleHQ+CjxjaXJjbGUgY3g9IjUyMCIgY3k9IjE4MCIgcj0iOCIgZmlsbD0iI2I3N2EwMCIvPjx0ZXh0IHg9IjUyMCIgeT0iMjE1Ij4zMDAgQTwvdGV4dD48dGV4dCB4PSI1MjAiIHk9IjI0MCI+5bi46KeE6amx5YqoPC90ZXh0Pgo8Y2lyY2xlIGN4PSI3OTAiIGN5PSIxODAiIHI9IjgiIGZpbGw9IiNiNzJhMmEiLz48dGV4dCB4PSI3OTAiIHk9IjIxNSI+MTAwMCsgQTwvdGV4dD48dGV4dCB4PSI3OTAiIHk9IjI0MCI+5bOw5YC8L+W/q+WFhTwvdGV4dD4KPC9nPjx0ZXh0IHg9IjQ1MCIgeT0iMTAwIiBmb250LXNpemU9IjE4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNTI2MDZkIj7ljZXkuIDph4/nqIvopoHlkIzml7bmu6HotrPpm7bmvILjgIHnur/mgKfjgIHluKblrr3jgIHng63mjZ/ogJflkozlip/og73lronlhajlhpfkvZnvvIzpnZ7luLjlm7Dpmr48L3RleHQ+PC9zdmc+" download="电流量程跨度.svg">保存此图</a>
+    </figure>
+    </div>
+<div><p>若零偏为100 mA，车辆静置24 h，则库仑积分产生：</p>
+<div class="formula">ΔQ = I<sub>offset</sub> · t = 0.1 A × 24 h = 2.4 Ah</div>
+<p>对100 Ah电池包，这对应约2.4%容量的等效积分偏差。如果软件只在大电流工况校准，静置阶段SOC漂移可能非常明显。</p>
+<p>因此应建立零点自学习条件：接触器断开、无外部充放电、母线稳定时进行零偏估计，但要避免把真实休眠负载“学成零偏”。</p></div></div></section>
+
+<section><div class="sec-title"><div class="num">4</div><h2>Hall / Fluxgate：天然隔离，但要管住零漂与磁场</h2></div>
+<table><tr><th>维度</th><th>Hall</th><th>Fluxgate</th><th>Shunt+隔离放大</th></tr>
+<tr><td>隔离</td><td>天然</td><td>天然</td><td>需隔离链</td></tr>
+<tr><td>零点/温漂</td><td>中等</td><td>通常更优</td><td>可做到很好</td></tr>
+<tr><td>过载能力</td><td>较强</td><td>较强</td><td>受shunt与放大器输入范围限制</td></tr>
+<tr><td>带宽</td><td>器件相关</td><td>器件相关</td><td>通常易做高带宽</td></tr>
+<tr><td>损耗</td><td>低</td><td>低</td><td>I²R</td></tr></table>
+<p>磁传感器还要考虑邻近母排、接触器线圈和外部磁场影响。布局不当时，即使传感器本体精度很好，系统误差也会恶化。</p></section>
+
+<section><div class="sec-title"><div class="num">5</div><h2>功能安全：为什么越来越多Pack使用双通道？</h2></div>
+<p>一个高精度通道可用于SOC/SOH与计量，另一个独立通道用于过流或交叉检查。关键不是简单复制两个相同传感器，而是降低共因失效：例如Shunt主通道 + 磁传感冗余，或者不同供电/ADC路径。</p>
+<div class="formula">r_I = I<sub>main</sub> − I<sub>redundant</sub></div>
+<p>残差阈值应随电流幅值、温度、带宽差异动态变化，避免把不同传感器的正常动态特性误判为故障。</p></section>
+
+<section><div class="sec-title"><div class="num">6</div><h2>量产验证建议</h2></div>
+<table><tr><th>项目</th><th>建议覆盖</th></tr>
+<tr><td>静态精度</td><td>0 A、±1 A、±10 A、±100 A、峰值电流；全温度</td></tr>
+<tr><td>动态响应</td><td>阶跃、电机脉冲、快充纹波、短路di/dt</td></tr>
+<tr><td>磁环境</td><td>接触器线圈、母排大电流、外部磁场注入</td></tr>
+<tr><td>热漂移</td><td>shunt自热、铜排温度梯度、环境温度循环</td></tr>
+<tr><td>诊断</td><td>偏置、饱和、断线、卡死、供电异常、双通道失配</td></tr></table></section>
+
+<section><div class="sec-title"><div class="num">7</div><h2>可专利化创新点 / Patent Ideas</h2></div>
+<div class="patent"><h3>Idea A｜多量程“软交接”电流估计器</h3>
+<p><b>痛点：</b>宽量程传感在低电流和高电流区难以同时获得最佳精度。</p>
+<p><b>构思：</b>使用高精度小量程通道 + 大量程安全通道，结合温度和动态状态在线计算权重，不采用硬阈值切换，而使用连续置信度融合。</p>
+<p><b>差异化：</b>避免量程切换点突变，并把每个通道的失调、噪声和带宽差异显式纳入估计。</p>
+<p><b>实现：</b>双通道同步采样、在线零偏估计、频率响应补偿、置信度矩阵。</p>
+<p><b>潜在权利要求：</b>根据幅值、温度和动态频段自适应融合多种电流传感技术。</p>
+<p><b>检索：</b>multi-range battery current fusion；hybrid shunt hall current sensing；IPC/CPC G01R19/00, B60L58/10。</p></div></section>
+
+<section><div class="sec-title"><div class="num">R</div><h2>参考资料</h2></div><ol class="refs"><li>TI, <a href="https://www.ti.com/document-viewer/lit/html/SBAA324">Shunt-Based Current-Sensing Solutions for BMS Applications in HEVs and EVs</a>, rev. 2021.</li><li>TI, <a href="https://www.ti.com/document-viewer/lit/html/SBAA293">Comparing Shunt- and Hall-Based Isolated Current-Sensing Solutions in HEV/EV</a>, rev. 2023.</li><li>TI, <a href="https://www.ti.com/tool/TIDA-03050">TIDA-03050 Automotive, mA-to-kA Range, Current Shunt Sensor Reference Design</a>.</li></ol></section>
+<div class="footer">潜在专利构思仅供研发讨论，未完成完整 FTO / 全球新颖性检索，不保证可授权。高压与EMC试验需由具备资质的人员在受控环境下执行。</div>
+</main></body></html>
