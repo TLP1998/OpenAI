@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>动力电池技术日报｜总目录与知识索引</title>
+<meta name="description" content="Daily Report on Power Battery Technology - 动力电池技术日报总目录，支持顺序模式与分类模式。">
+<style>
+:root{
+  --bg:#f5f7fa;--panel:#ffffff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#2563eb;--accent-soft:#eff6ff;--chip:#f3f4f6;--shadow:0 10px 28px rgba(15,23,42,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 56px}
+.hero{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;border-radius:22px;padding:30px 30px 26px;box-shadow:var(--shadow)}
+.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;opacity:.7}
+h1{margin:8px 0 10px;font-size:30px;line-height:1.25}
+.subtitle{margin:0;opacity:.82;line-height:1.7}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px}
+.stat{min-width:130px}
+.stat b{display:block;font-size:24px}
+.stat span{font-size:12px;opacity:.7}
+.toolbar{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+.mode-switch{display:flex;gap:8px;flex-wrap:wrap}
+.mode-btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:700}
+.mode-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.filters{display:grid;grid-template-columns:1.45fr 1fr 1fr 1fr auto;gap:10px;margin-top:12px}
+input,select,button{font:inherit}
+input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px;color:var(--text);outline:none}
+input:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
+.reset{border:1px solid var(--line);background:#fff;border-radius:11px;padding:0 14px;cursor:pointer}
+.panel{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;align-items:center}
+.panel-head h2{margin:0;font-size:18px}
+.result-count{font-size:13px;color:var(--muted)}
+.list{padding:8px 18px 18px}
+.item{display:grid;grid-template-columns:116px 1fr auto;gap:18px;align-items:start;padding:18px 2px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:none}
+.date{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;padding-top:3px}
+.title{font-weight:750;line-height:1.55;text-decoration:none}
+.title:hover{color:var(--accent)}
+.meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.chip{display:inline-flex;align-items:center;border-radius:999px;background:var(--chip);padding:4px 9px;font-size:12px;color:#475569}
+.category{background:var(--accent-soft);color:#1d4ed8}
+.open{font-size:13px;color:var(--accent);text-decoration:none;white-space:nowrap;padding-top:2px}
+.category-block{padding:18px 20px;border-bottom:1px solid var(--line)}
+.category-block:last-child{border-bottom:none}
+.category-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.category-title h3{margin:0;font-size:16px}
+.category-title span{font-size:12px;color:var(--muted)}
+.category-items .item{grid-template-columns:116px 1fr auto}
+.empty{padding:52px 20px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--text);font-size:18px;margin-bottom:8px}
+.empty code{background:#f3f4f6;padding:2px 6px;border-radius:6px}
+.note{margin-top:16px;padding:14px 16px;border-radius:14px;border:1px dashed #cbd5e1;color:#64748b;background:#fff;font-size:13px;line-height:1.7}
+.hidden{display:none!important}
+@media(max-width:820px){
+  .filters{grid-template-columns:1fr 1fr}
+  .filters .search{grid-column:1/-1}
+  .item,.category-items .item{grid-template-columns:1fr}
+  .open{padding-top:0}
+}
+@media(max-width:520px){
+  .wrap{padding:14px 10px 40px}
+  .hero{border-radius:16px;padding:22px 18px}
+  h1{font-size:24px}
+  .filters{grid-template-columns:1fr}
+  .filters .search{grid-column:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Daily Report on Power Battery Technology</div>
+    <h1>动力电池技术日报｜总目录与知识索引</h1>
+    <p class="subtitle">支持按期次顺序浏览与按动力电池技术体系分类浏览；可按日期、类别和关键词快速筛选。</p>
+    <div class="stats">
+      <div class="stat"><b id="statTotal">0</b><span>已归档期次</span></div>
+      <div class="stat"><b id="statCats">0</b><span>已覆盖类别</span></div>
+      <div class="stat"><b id="statLatest">—</b><span>最近一期</span></div>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <div class="mode-switch">
+      <button class="mode-btn active" data-mode="sequence">顺序模式</button>
+      <button class="mode-btn" data-mode="category">分类模式</button>
+    </div>
+
+    <div class="filters">
+      <input class="search" id="keyword" type="search" placeholder="搜索期次名称、关键词或标签">
+      <input id="dateFrom" type="date" aria-label="开始日期">
+      <input id="dateTo" type="date" aria-label="结束日期">
+      <select id="categoryFilter" aria-label="类别筛选">
+        <option value="">全部类别</option>
+      </select>
+      <button class="reset" id="resetBtn" type="button">重置</button>
+    </div>
+  </section>
+
+  <section class="panel" id="sequencePanel">
+    <div class="panel-head">
+      <h2>顺序模式</h2>
+      <div class="result-count" id="sequenceCount">0 期</div>
+    </div>
+    <div class="list" id="sequenceList"></div>
+  </section>
+
+  <section class="panel hidden" id="categoryPanel">
+    <div class="panel-head">
+      <h2>分类模式</h2>
+      <div class="result-count" id="categoryCount">0 期</div>
+    </div>
+    <div id="categoryList"></div>
+  </section>
+
+  <div class="note">
+    分类体系采用动力电池工程常用技术维度：材料与化学体系、电芯设计与工艺、模组/Pack与结构集成、BMS与电气电子、高压与充放电、热管理、安全与热失控、测试验证/EMC/法规、制造与质量、回收与全生命周期、前沿技术。每一期可设置一个主类别并附多个标签。
+  </div>
+</div>
+
+<script>
+const CATEGORY_ORDER = [
+  "材料与化学体系",
+  "电芯设计与工艺",
+  "模组/Pack与结构集成",
+  "BMS与电气电子",
+  "高压与充放电",
+  "热管理",
+  "安全与热失控",
+  "测试验证/EMC/法规",
+  "制造与质量",
+  "回收与全生命周期",
+  "前沿技术"
+];
+
+/*
+  日报数据格式：
+  {
+    date: "2026-10-13",
+    title: "本期日报名称",
+    category: "高压与充放电",
+    tags: ["800V","串并联"],
+    url: "./2026-10-13-example.html"
+  }
+
+  当前 GitHub 目录中尚无日报 HTML，因此不预置虚构条目。
+*/
+const reports = [];
+
+let mode = "sequence";
+
+const el = id => document.getElementById(id);
+const keyword = el("keyword");
+const dateFrom = el("dateFrom");
+const dateTo = el("dateTo");
+const categoryFilter = el("categoryFilter");
+
+function safe(v){return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+
+function initCategoryFilter(){
+  const used = new Set(reports.map(r=>r.category).filter(Boolean));
+  const cats = CATEGORY_ORDER.filter(c=>used.has(c));
+  for(const c of cats){
+    const o=document.createElement("option");
+    o.value=c;o.textContent=c;categoryFilter.appendChild(o);
+  }
+}
+
+function filtered(){
+  const q=keyword.value.trim().toLowerCase();
+  const from=dateFrom.value;
+  const to=dateTo.value;
+  const cat=categoryFilter.value;
+  return reports.filter(r=>{
+    const hay=[r.title,r.category,...(r.tags||[])].join(" ").toLowerCase();
+    return (!q||hay.includes(q))
+      &&(!from||r.date>=from)
+      &&(!to||r.date<=to)
+      &&(!cat||r.category===cat);
+  }).sort((a,b)=>b.date.localeCompare(a.date));
+}
+
+function itemHTML(r){
+  const tags=(r.tags||[]).map(t=>`<span class="chip">${safe(t)}</span>`).join("");
+  const href=safe(r.url||"#");
+  return `
+  <article class="item">
+    <div class="date">${safe(r.date)}</div>
+    <div>
+      <a class="title" href="${href}">${safe(r.title)}</a>
+      <div class="meta">
+        <span class="chip category">${safe(r.category||"未分类")}</span>${tags}
+      </div>
+    </div>
+    <a class="open" href="${href}">打开本期 →</a>
+  </article>`;
+}
+
+function emptyHTML(){
+  return `<div class="empty">
+    <strong>当前暂无已归档日报 HTML</strong>
+    <div>本目录目前仅有 <code>README.md</code> 与本总目录。日报文件加入后，可在此索引。</div>
+  </div>`;
+}
+
+function renderSequence(data){
+  el("sequenceCount").textContent=`${data.length} 期`;
+  el("sequenceList").innerHTML=data.length?data.map(itemHTML).join(""):emptyHTML();
+}
+
+function renderCategory(data){
+  el("categoryCount").textContent=`${data.length} 期`;
+  if(!data.length){el("categoryList").innerHTML=emptyHTML();return;}
+  const groups=new Map();
+  for(const c of CATEGORY_ORDER) groups.set(c,[]);
+  groups.set("未分类",[]);
+  for(const r of data){
+    const k=groups.has(r.category)?r.category:"未分类";
+    groups.get(k).push(r);
+  }
+  el("categoryList").innerHTML=[...groups.entries()]
+    .filter(([,arr])=>arr.length)
+    .map(([cat,arr])=>`
+      <section class="category-block">
+        <div class="category-title"><h3>${safe(cat)}</h3><span>${arr.length} 期</span></div>
+        <div class="category-items">${arr.map(itemHTML).join("")}</div>
+      </section>`).join("");
+}
+
+function updateStats(){
+  const cats=new Set(reports.map(r=>r.category).filter(Boolean));
+  const latest=[...reports].sort((a,b)=>b.date.localeCompare(a.date))[0];
+  el("statTotal").textContent=reports.length;
+  el("statCats").textContent=cats.size;
+  el("statLatest").textContent=latest?latest.date:"—";
+}
+
+function render(){
+  const data=filtered();
+  renderSequence(data);
+  renderCategory(data);
+}
+
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    mode=btn.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach(x=>x.classList.toggle("active",x===btn));
+    el("sequencePanel").classList.toggle("hidden",mode!=="sequence");
+    el("categoryPanel").classList.toggle("hidden",mode!=="category");
+  });
+});
+
+[keyword,dateFrom,dateTo,categoryFilter].forEach(x=>x.addEventListener("input",render));
+el("resetBtn").addEventListener("click",()=>{
+  keyword.value="";dateFrom.value="";dateTo.value="";categoryFilter.value="";render();
+});
+
+initCategoryFilter();
+updateStats();
+render();
+</script>
+</body>
+</html>
