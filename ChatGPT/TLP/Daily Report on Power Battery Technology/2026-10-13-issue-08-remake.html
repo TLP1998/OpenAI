@@ -1,0 +1,81 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>动力电池技术日报 第8期 历史补档重制</title><style>
+:root{--ink:#172235;--blue:#0d4f8b;--blue2:#eaf3fb;--red:#b72a2a;--line:#cbd6e2;--muted:#5e6b78;--paper:#f8f6f0}
+*{box-sizing:border-box} body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.page{max-width:1120px;margin:0 auto;background:white;padding:28px 34px 42px;box-shadow:0 2px 18px #0001}
+header{display:grid;grid-template-columns:1fr 300px;gap:24px;border-bottom:4px solid var(--ink);padding-bottom:16px}
+.kicker{font-size:14px;letter-spacing:.15em;color:var(--blue);font-weight:700}
+h1{font-size:36px;line-height:1.18;margin:8px 0 8px} .sub{color:var(--muted);font-size:15px}
+.guide{background:var(--blue2);border:1px solid #9eb9d3;padding:14px 16px;border-radius:8px}.guide h3{margin:0 0 8px;color:var(--blue)}
+.guide ol{margin:0;padding-left:20px;font-size:14px;line-height:1.65}
+.note{margin:18px 0;padding:12px 14px;border-left:4px solid #7d8793;background:#f5f7f9;color:#4b5864;font-size:14px}
+section{margin-top:22px}.sec-title{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+.num{background:var(--blue);color:white;width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700}
+h2{font-size:23px;margin:0}.lead{font-weight:700;color:#243649}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:#fbfcfe;border:1px solid var(--line);border-radius:8px;padding:14px}.card h3{margin:0 0 8px;font-size:17px;color:var(--blue)}
+.formula{margin:14px 0;background:#f8fbff;border:1px solid #bad0e4;border-radius:8px;text-align:center;padding:14px;font-family:Cambria,"Times New Roman",serif;font-size:22px}
+.result{border-left:5px solid var(--red);background:#fff4f2;padding:12px 14px;margin:12px 0;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px} th,td{border:1px solid #cfd8e1;padding:8px 9px;text-align:left;vertical-align:top} th{background:#edf4fa;color:#173f66}
+.fig{margin:8px 0 14px;padding:10px;border:1px solid #d6dee6;background:#fff;border-radius:8px}.fig img{display:block;width:100%;max-height:330px;object-fit:contain}.fig figcaption{font-size:13px;color:#566473;margin-top:6px}.save{font-size:12px;color:#0d4f8b;text-decoration:none}
+.patent{border:1px solid #c9b778;background:#fffdf4;padding:15px;border-radius:8px}.patent h3{margin-top:0;color:#6d5610}
+.refs li{margin:6px 0;word-break:break-all}.footer{margin-top:28px;padding-top:14px;border-top:2px solid var(--ink);font-size:12px;color:#67727d}
+@media(max-width:760px){.page{padding:20px 16px}header{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}h1{font-size:29px}.fig img{max-height:260px}}
+</style></head><body><main class="page">
+<header><div><div class="kicker">动力电池技术日报 · 历史补档重制</div><h1>HVIL高压互锁：从“开路报警”走向可诊断的连接健康监测</h1>
+<div class="sub">第8期｜技术精读 / 工程评审材料｜重制日期：2026-10-13</div></div>
+<div class="guide"><h3>本期导读</h3><ol><li>HVIL到底监视什么</li><li>多状态而非二值判断</li><li>阈值容差预算</li><li>接触退化趋势诊断</li><li>与接触器/IMD边界</li><li>量产故障注入</li><li>Patent Idea：阻抗指纹</li></ol></div></header>
+<div class="note">说明：原第8期 HTML 附件未能从历史文件中恢复。本文件为 2026-10-13 按当前固定版式重新制作的“历史补档重制版”，用于补齐第8–10期阅读档案；不视为国庆假期正式工作日报发送记录。</div>
+
+<section><div class="sec-title"><div class="num">1</div><h2>HVIL真正监视的是什么？</h2></div>
+<p>HVIL（High-Voltage Interlock Loop）本质上是一条低压、低电流的安全监测环路，串联穿过高压连接器、服务断开装置、逆变器、OBC、DC/DC等高压节点。它不是用来测量高压本身，而是用来判断“高压连接路径是否仍处于预期机械/电气状态”。TI 的 TIDA-020069 参考设计明确覆盖正常闭合、开路、短到电池和短到地等状态，并提供模拟与数字输出。</p>
+
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiB2aWV3Qm94PSIwIDAgOTAwIDMzMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiBmaWxsPSIjZjhmYmZmIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjMTIzYjYyIiBmb250LXdlaWdodD0iYm9sZCI+SFZJTO+8muS9juWOi+Wwj+eUtea1geeOr+i3r+ebkeinhumrmOWOi+i/nuaOpeWujOaVtOaApzwvdGV4dD4KPHJlY3QgeD0iNTAiIHk9IjExMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSI3MCIgcng9IjEyIiBmaWxsPSIjZGNlY2Y4IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSIxMjUiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+SFZJTCBTb3VyY2U8L3RleHQ+PHRleHQgeD0iMTI1IiB5PSIxNjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPuaBkua1gS/nlLXljovmv4DlirE8L3RleHQ+CjxyZWN0IHg9IjM3NSIgeT0iMTEwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjcwIiByeD0iMTIiIGZpbGw9IiNlZWY0ZjciIHN0cm9rZT0iIzY5Nzc4NiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjx0ZXh0IHg9IjQ1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4Ij7ov57mjqXlmajpk748L3RleHQ+PHRleHQgeD0iNDUwIiB5PSIxNjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPk1TRCAvIEludmVydGVyIC8gT0JDPC90ZXh0Pgo8cmVjdCB4PSI3MDAiIHk9IjExMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSI3MCIgcng9IjEyIiBmaWxsPSIjZThmNWVhIiBzdHJva2U9IiMzYjdkNDQiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSI3NzUiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+SFZJTCBTZW5zZTwvdGV4dD48dGV4dCB4PSI3NzUiIHk9IjE2NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNCI+5qih5oufICsg5pWw5a2X6K+K5patPC90ZXh0Pgo8cGF0aCBkPSJNMjAwIDE0NSBIMzc1IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik01MjUgMTQ1IEg3MDAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Ik03MDAgMjE1IEgyMDAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTIwMCAxNDUgVjIxNSIgc3Ryb2tlPSIjMGQ0ZjhiIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNNzAwIDE0NSBWMjE1IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPgo8Y2lyY2xlIGN4PSI0NTAiIGN5PSIyMTUiIHI9IjEyIiBmaWxsPSIjYjcyYTJhIi8+PHRleHQgeD0iNDcwIiB5PSIyMjIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNiNzJhMmEiPuW8gOi3ryAvIOefrei3ryAvIOaOpeinpumAgOWMliDihpIg5Zue6Lev5bmF5YC85byC5bi4PC90ZXh0Pgo8L3N2Zz4=" alt="HVIL环路结构示意"/>
+      <figcaption><b>HVIL环路结构示意</b>｜低压激励贯穿高压连接器链，回路幅值和逻辑状态用于判断连接完整性。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiB2aWV3Qm94PSIwIDAgOTAwIDMzMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzMwIiBmaWxsPSIjZjhmYmZmIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjMTIzYjYyIiBmb250LXdlaWdodD0iYm9sZCI+SFZJTO+8muS9juWOi+Wwj+eUtea1geeOr+i3r+ebkeinhumrmOWOi+i/nuaOpeWujOaVtOaApzwvdGV4dD4KPHJlY3QgeD0iNTAiIHk9IjExMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSI3MCIgcng9IjEyIiBmaWxsPSIjZGNlY2Y4IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSIxMjUiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+SFZJTCBTb3VyY2U8L3RleHQ+PHRleHQgeD0iMTI1IiB5PSIxNjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPuaBkua1gS/nlLXljovmv4DlirE8L3RleHQ+CjxyZWN0IHg9IjM3NSIgeT0iMTEwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjcwIiByeD0iMTIiIGZpbGw9IiNlZWY0ZjciIHN0cm9rZT0iIzY5Nzc4NiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjx0ZXh0IHg9IjQ1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4Ij7ov57mjqXlmajpk748L3RleHQ+PHRleHQgeD0iNDUwIiB5PSIxNjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiPk1TRCAvIEludmVydGVyIC8gT0JDPC90ZXh0Pgo8cmVjdCB4PSI3MDAiIHk9IjExMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSI3MCIgcng9IjEyIiBmaWxsPSIjZThmNWVhIiBzdHJva2U9IiMzYjdkNDQiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSI3NzUiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+SFZJTCBTZW5zZTwvdGV4dD48dGV4dCB4PSI3NzUiIHk9IjE2NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNCI+5qih5oufICsg5pWw5a2X6K+K5patPC90ZXh0Pgo8cGF0aCBkPSJNMjAwIDE0NSBIMzc1IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik01MjUgMTQ1IEg3MDAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Ik03MDAgMjE1IEgyMDAiIHN0cm9rZT0iIzBkNGY4YiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTIwMCAxNDUgVjIxNSIgc3Ryb2tlPSIjMGQ0ZjhiIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNNzAwIDE0NSBWMjE1IiBzdHJva2U9IiMwZDRmOGIiIHN0cm9rZS13aWR0aD0iNCIvPgo8Y2lyY2xlIGN4PSI0NTAiIGN5PSIyMTUiIHI9IjEyIiBmaWxsPSIjYjcyYTJhIi8+PHRleHQgeD0iNDcwIiB5PSIyMjIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNiNzJhMmEiPuW8gOi3ryAvIOefrei3ryAvIOaOpeinpumAgOWMliDihpIg5Zue6Lev5bmF5YC85byC5bi4PC90ZXh0Pgo8L3N2Zz4=" download="HVIL环路结构示意.svg">保存此图</a>
+    </figure>
+    
+<div class="result">工程关键：HVIL不是单纯“插头有没有拔掉”，而是安全状态机的一个输入。它必须和接触器、电流、母线电压、碰撞状态共同决定高压系统下一步动作。</div></section>
+
+<section><div class="sec-title"><div class="num">2</div><h2>为什么只做开路检测不够？</h2></div>
+<div class="grid2"><div><p>如果HVIL只使用一个数字阈值，很容易把接触器动作瞬态、线束接触电阻上升、电源扰动和真实开路混为一谈。更合理的做法是保留模拟测量通道，并对回路电流/回程电压建立多个窗口。</p>
+<div class="formula">R<sub>loop</sub> ≈ (V<sub>src</sub> − V<sub>ret</sub>) / I<sub>loop</sub></div>
+<p>在恒流激励情况下，回程电压的变化可以映射为回路等效阻抗变化。若连接器接触退化导致环路增加几十欧姆，虽然尚未彻底开路，趋势诊断已经可以提前发现。</p></div>
+<div>
+    <figure class="fig">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzEwIiB2aWV3Qm94PSIwIDAgOTAwIDMxMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzEwIiBmaWxsPSIjZmZmIi8+Cjx0ZXh0IHg9IjM1IiB5PSIzOCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjMTIzYjYyIiBmb250LXdlaWdodD0iYm9sZCI+SFZJTCDkuI3lupTlj6rovpPlh7rigJzlvIAv6Zet4oCd5LqM5YC854q25oCBPC90ZXh0Pgo8ZyBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiPgo8cmVjdCB4PSI0NSIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2U5ZjZlYiIgc3Ryb2tlPSIjNGI4YzUzIi8+PHRleHQgeD0iMTMwIiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuato+W4uOmXreeOrzwvdGV4dD48dGV4dCB4PSIxMzAiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SSDiiYggSV9ub208L3RleHQ+CjxyZWN0IHg9IjI1MCIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2ZmZjFlZiIgc3Ryb2tlPSIjYjcyYTJhIi8+PHRleHQgeD0iMzM1IiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuW8gOi3rzwvdGV4dD48dGV4dCB4PSIzMzUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SSDihpIgMDwvdGV4dD4KPHJlY3QgeD0iNDU1IiB5PSI5MCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI5MCIgcng9IjEwIiBmaWxsPSIjZmZmOGU4IiBzdHJva2U9IiNhNjdiMTgiLz48dGV4dCB4PSI1NDAiIHk9IjEyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+55+t5Yiw5ZywPC90ZXh0Pjx0ZXh0IHg9IjU0MCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5WX3JldHVybiDihpM8L3RleHQ+CjxyZWN0IHg9IjY2MCIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2ZmZjhlOCIgc3Ryb2tlPSIjYTY3YjE4Ii8+PHRleHQgeD0iNzQ1IiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuefreWIsOeUtea6kDwvdGV4dD48dGV4dCB4PSI3NDUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Vl9yZXR1cm4g4oaRPC90ZXh0Pgo8dGV4dCB4PSI0NSIgeT0iMjM1IiBmaWxsPSIjNDY1NjY1Ij7ov5vkuIDmraXlt6XnqIvljJbvvJrlkIzml7bnnIvluYXlgLzjgIHmlpznjofjgIHop6bngrnliqjkvZzml7bluo/kuI7ljoblj7Lln7rnur/vvIzlj6/or4bliKvigJzmjqXop6bnlLXpmLvpgJDmraXmgbbljJbigJ3ogIzkuI3ku4XmmK/lvbvlupXlvIDot6/jgII8L3RleHQ+CjwvZz48L3N2Zz4=" alt="HVIL多状态诊断"/>
+      <figcaption><b>HVIL多状态诊断</b>｜将正常、开路、短地、短电源区分开，并进一步引入历史基线识别渐进退化。</figcaption>
+      <a class="save" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iMzEwIiB2aWV3Qm94PSIwIDAgOTAwIDMxMCI+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMzEwIiBmaWxsPSIjZmZmIi8+Cjx0ZXh0IHg9IjM1IiB5PSIzOCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjMTIzYjYyIiBmb250LXdlaWdodD0iYm9sZCI+SFZJTCDkuI3lupTlj6rovpPlh7rigJzlvIAv6Zet4oCd5LqM5YC854q25oCBPC90ZXh0Pgo8ZyBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiPgo8cmVjdCB4PSI0NSIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2U5ZjZlYiIgc3Ryb2tlPSIjNGI4YzUzIi8+PHRleHQgeD0iMTMwIiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuato+W4uOmXreeOrzwvdGV4dD48dGV4dCB4PSIxMzAiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SSDiiYggSV9ub208L3RleHQ+CjxyZWN0IHg9IjI1MCIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2ZmZjFlZiIgc3Ryb2tlPSIjYjcyYTJhIi8+PHRleHQgeD0iMzM1IiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuW8gOi3rzwvdGV4dD48dGV4dCB4PSIzMzUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SSDihpIgMDwvdGV4dD4KPHJlY3QgeD0iNDU1IiB5PSI5MCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI5MCIgcng9IjEwIiBmaWxsPSIjZmZmOGU4IiBzdHJva2U9IiNhNjdiMTgiLz48dGV4dCB4PSI1NDAiIHk9IjEyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+55+t5Yiw5ZywPC90ZXh0Pjx0ZXh0IHg9IjU0MCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5WX3JldHVybiDihpM8L3RleHQ+CjxyZWN0IHg9IjY2MCIgeT0iOTAiIHdpZHRoPSIxNzAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgZmlsbD0iI2ZmZjhlOCIgc3Ryb2tlPSIjYTY3YjE4Ii8+PHRleHQgeD0iNzQ1IiB5PSIxMjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuefreWIsOeUtea6kDwvdGV4dD48dGV4dCB4PSI3NDUiIHk9IjE1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Vl9yZXR1cm4g4oaRPC90ZXh0Pgo8dGV4dCB4PSI0NSIgeT0iMjM1IiBmaWxsPSIjNDY1NjY1Ij7ov5vkuIDmraXlt6XnqIvljJbvvJrlkIzml7bnnIvluYXlgLzjgIHmlpznjofjgIHop6bngrnliqjkvZzml7bluo/kuI7ljoblj7Lln7rnur/vvIzlj6/or4bliKvigJzmjqXop6bnlLXpmLvpgJDmraXmgbbljJbigJ3ogIzkuI3ku4XmmK/lvbvlupXlvIDot6/jgII8L3RleHQ+CjwvZz48L3N2Zz4=" download="HVIL多状态诊断.svg">保存此图</a>
+    </figure>
+    </div></div></section>
+
+<section><div class="sec-title"><div class="num">3</div><h2>定量算例：阈值设计为什么必须带容差预算？</h2></div>
+<p>假设HVIL采用5 V激励、目标环流10 mA，正常回路等效电阻约100 Ω，则正常压降约1 V。若连接器老化额外增加50 Ω，则压降增至1.5 V。看起来0.5 V差异很大，但还必须叠加LDO误差、恒流源误差、ADC误差、温漂、线束长度和EMC干扰。</p>
+<div class="formula">V<sub>th</sub> = V<sub>nom</sub> ± (U<sub>source</sub> + U<sub>ADC</sub> + U<sub>temp</sub> + U<sub>EMC</sub>)</div>
+<p>因此阈值不能只按台架室温均值制定，而应按最坏角点形成诊断窗口，并设置时间去抖和状态机，避免接触器切换瞬间误判。</p></section>
+
+<section><div class="sec-title"><div class="num">4</div><h2>故障模式与诊断逻辑</h2></div>
+<table><tr><th>现象</th><th>可能原因</th><th>建议交叉验证</th></tr>
+<tr><td>HVIL瞬间掉线后恢复</td><td>接插件微动、触点弹跳、EMC耦合</td><td>关联车辆振动、接触器动作、12 V波动和时间戳</td></tr>
+<tr><td>HVIL缓慢漂移</td><td>接触腐蚀、线束阻抗上升</td><td>趋势估计Rloop，与温度补偿后基线比较</td></tr>
+<tr><td>HVIL开路 + 母线仍有高压</td><td>连接器已松脱但DC-link残压存在</td><td>禁止把HVIL开路等同于“系统已无高压”</td></tr>
+<tr><td>HVIL正常但绝缘异常</td><td>互锁机械完整但高压绝缘失效</td><td>HVIL不能替代IMD绝缘监测</td></tr></table></section>
+
+<section><div class="sec-title"><div class="num">5</div><h2>设计窗口与量产验证</h2></div>
+<div class="grid3"><div class="card"><h3>电气角点</h3><p>9–16 V低压供电、冷/热温度、线束最大长度、不同连接器组合。</p></div>
+<div class="card"><h3>故障注入</h3><p>开路、短地、短电源、串联附加电阻、间歇开路、抖动。</p></div>
+<div class="card"><h3>系统动作</h3><p>验证HVIL故障后的功率降额、接触器策略、DTC与维修恢复。</p></div></div></section>
+
+<section><div class="sec-title"><div class="num">6</div><h2>可专利化创新点 / Patent Ideas</h2></div>
+<div class="patent"><h3>Idea A｜HVIL“阻抗指纹 + 动作时序”预测性退化诊断</h3>
+<p><b>痛点：</b>传统HVIL多在彻底开路后才报警，无法提前识别接插件接触劣化。</p>
+<p><b>构思：</b>每次上电/下电时利用可控的小幅激励，记录回路阻抗、响应时间、接触器动作相关瞬态，形成连接器链的健康指纹；用温度补偿后的长期趋势识别退化。</p>
+<p><b>差异化：</b>从“离散故障检测”升级为“连接链健康度估计”。</p>
+<p><b>实现：</b>恒流源多档激励、ADC波形采样、动作时间戳、连接器拓扑映射、温度补偿模型。</p>
+<p><b>潜在权利要求：</b>基于多次激励波形和动作时序对HVIL链进行分段退化定位。</p>
+<p><b>检索方向：</b>HVIL impedance fingerprint；connector degradation diagnosis；IPC/CPC: B60L3/00, G01R31/00。</p></div></section>
+
+<section><div class="sec-title"><div class="num">R</div><h2>参考资料</h2></div><ol class="refs"><li>TI, <a href="https://www.ti.com/tool/TIDA-020069">TIDA-020069 Automotive High-Voltage Interlock Loop Reference Design</a>, 2024.</li><li>TI, <a href="https://www.ti.com/tool/TIDA-01445">TIDA-01445 Automotive High-Voltage Interlock Reference Design</a>.</li></ol></section>
+<div class="footer">潜在专利构思仅供研发讨论，未完成完整 FTO / 全球新颖性检索，不保证可授权。高压与EMC试验需由具备资质的人员在受控环境下执行。</div>
+</main></body></html>
