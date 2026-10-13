@@ -47,6 +47,13 @@ input:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
 .open{font-size:13px;color:var(--accent);text-decoration:none;white-space:nowrap;padding-top:2px}
 .category-block{padding:18px 20px;border-bottom:1px solid var(--line)}
 .category-block:last-child{border-bottom:none}
+.category-block summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none}
+.category-block summary::-webkit-details-marker{display:none}
+.category-block summary::before{content:"▸";color:var(--accent);font-size:18px;transition:transform .15s}
+.category-block[open] summary::before{transform:rotate(90deg)}
+.category-block summary h3{flex:1}
+.category-block summary:focus-visible{outline:2px solid var(--accent);outline-offset:5px;border-radius:5px}
+.category-items{margin-top:10px}
 .category-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
 .category-title h3{margin:0;font-size:16px}
 .category-title span{font-size:12px;color:var(--muted)}
@@ -186,6 +193,7 @@ const reports = [
 ];
 
 let mode = "sequence";
+const expandedCategories = new Set();
 
 const el = id => document.getElementById(id);
 const keyword = el("keyword");
@@ -264,11 +272,18 @@ function renderCategory(data){
   el("categoryList").innerHTML=[...groups.entries()]
     .filter(([,arr])=>arr.length)
     .map(([cat,arr])=>`
-      <section class="category-block">
-        <div class="category-title"><h3>${safe(cat)}</h3><span>${arr.length} 期</span></div>
+      <details class="category-block" data-category="${safe(cat)}" ${expandedCategories.has(cat)?"open":""}>
+        <summary class="category-title"><h3>${safe(cat)}</h3><span>${arr.length} 期</span></summary>
         <div class="category-items">${arr.map(itemHTML).join("")}</div>
-      </section>`).join("");
+      </details>`).join("");
 }
+
+el("categoryList").addEventListener("toggle",e=>{
+  const d=e.target;
+  if(!d.matches("details.category-block"))return;
+  if(d.open)expandedCategories.add(d.dataset.category);
+  else expandedCategories.delete(d.dataset.category);
+},true);
 
 function updateStats(){
   const cats=new Set(reports.map(r=>r.category).filter(Boolean));
