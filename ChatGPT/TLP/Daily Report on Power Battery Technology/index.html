@@ -150,6 +150,11 @@ const CATEGORY_ORDER = [
   以下条目仅指向已经实际归档的 HTML。
 */
 const reports = [
+{"date":"2026-10-08","title":"第12期｜800V SiC逆变器共模EMI与BMS误测诊断","category":"测试验证/EMC/法规","tags":["800V","SiC","共模EMI","BMS","误测诊断"],"url":"./2026-10-08-issue-12.html"},
+{"date":"2026-10-07","title":"第11期｜快充析锂边界与负极电位闭环控制","category":"高压与充放电","tags":["快充","析锂","负极电位","闭环控制","BMS"],"url":"./2026-10-07-issue-11.html"},
+{"date":"2026-10-13","dateLabel":"历史补档 2026-10-13","title":"第10期｜EMC磁环与共模扼流（历史补档重制）","category":"测试验证/EMC/法规","tags":["EMC","磁环","共模扼流","SiC","历史补档"],"url":"./2026-10-13-issue-10-remake.html"},
+{"date":"2026-10-13","dateLabel":"历史补档 2026-10-13","title":"第9期｜Pack电流传感：Shunt / Hall / Fluxgate（历史补档重制）","category":"BMS与电气电子","tags":["电流传感","Shunt","Hall","Fluxgate","历史补档"],"url":"./2026-10-13-issue-09-remake.html"},
+{"date":"2026-10-13","dateLabel":"历史补档 2026-10-13","title":"第8期｜HVIL高压互锁诊断（历史补档重制）","category":"BMS与电气电子","tags":["HVIL","高压互锁","诊断","连接健康","历史补档"],"url":"./2026-10-13-issue-08-remake.html"},
 {"date":"2026-10-13","title":"第15期｜400/800V可重构电池包串并联切换","category":"高压与充放电","tags":["400V","800V","串并联切换","可重构电池包","BMS"],"url":"./2026-10-13-issue-15.html"},
 {"date":"2026-10-09","title":"第13期｜热失控排气泄压与多源预警","category":"安全与热失控","tags":["热失控","排气泄压","多源预警","Pack安全"],"url":"./2026-10-09-issue-13.html"},
   {
@@ -199,6 +204,11 @@ function initCategoryFilter(){
   }
 }
 
+function issueNo(r){
+  const m=String(r.title||"").match(/第(\d+)期/);
+  return m?Number(m[1]):0;
+}
+
 function filtered(){
   const q=keyword.value.trim().toLowerCase();
   const from=dateFrom.value;
@@ -210,7 +220,7 @@ function filtered(){
       &&(!from||r.date>=from)
       &&(!to||r.date<=to)
       &&(!cat||r.category===cat);
-  }).sort((a,b)=>b.date.localeCompare(a.date));
+  }).sort((a,b)=>issueNo(b)-issueNo(a)||b.date.localeCompare(a.date));
 }
 
 function itemHTML(r){
@@ -218,7 +228,7 @@ function itemHTML(r){
   const href=safe(r.url||"#");
   return `
   <article class="item">
-    <div class="date">${safe(r.date)}</div>
+    <div class="date">${safe(r.dateLabel||r.date)}</div>
     <div>
       <a class="title" href="${href}">${safe(r.title)}</a>
       <div class="meta">
