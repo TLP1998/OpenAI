@@ -31,6 +31,9 @@ input,select,button{font:inherit}
 input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 12px;color:var(--text);outline:none}
 input:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
 .reset{border:1px solid var(--line);background:#fff;border-radius:11px;padding:0 14px;cursor:pointer}
+.date-field{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:12px;font-weight:600;color:var(--muted)}
+.date-field input{min-width:0;font-size:15px;color:var(--text)}
+.filter-help{margin:10px 2px 0;font-size:12px;line-height:1.6;color:var(--muted)}
 .panel{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
 .panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;align-items:center}
 .panel-head h2{margin:0;font-size:18px}
@@ -99,13 +102,14 @@ input:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
 
     <div class="filters">
       <input class="search" id="keyword" type="search" placeholder="搜索期次名称、关键词或标签">
-      <input id="dateFrom" type="date" aria-label="开始日期">
-      <input id="dateTo" type="date" aria-label="结束日期">
+      <label class="date-field"><span>开始日期</span><input id="dateFrom" type="date" aria-label="开始日期"></label>
+      <label class="date-field"><span>结束日期</span><input id="dateTo" type="date" aria-label="结束日期"></label>
       <select id="categoryFilter" aria-label="类别筛选">
         <option value="">全部类别</option>
       </select>
       <button class="reset" id="resetBtn" type="button">重置</button>
     </div>
+    <p class="filter-help">日期筛选：选择开始和结束日期，仅显示该时间段内的日报；留空表示不限日期，可只填写其中一项。</p>
   </section>
 
   <section class="panel" id="sequencePanel">
