@@ -1,7 +1,8 @@
-// These are PUBLIC browser connection values, not passwords.
-// Supabase Dashboard > Connect: Project URL + publishable key.
-// Never put Supabase secret key, service_role key, or a user's password here.
+// Public browser configuration. Safe to commit URL, publishable key and account email.
+// IMPORTANT: password is NEVER stored here. A password in public GitHub is no protection.
+// Configure these three fields after creating a Supabase Free project.
 window.TLP_TRANSFER_CONFIG = {
   supabaseUrl: "",
-  supabasePublishableKey: ""
+  supabasePublishableKey: "",
+  accountEmail: ""
 };
