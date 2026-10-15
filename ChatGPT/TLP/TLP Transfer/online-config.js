@@ -1,8 +1,6 @@
-// Public browser configuration. Safe to commit URL, publishable key and account email.
-// IMPORTANT: password is NEVER stored here. A password in public GitHub is no protection.
-// Configure these three fields after creating a Supabase Free project.
+// TLP Transfer: public no-login mode; fill in after creating Supabase Free.
+// Only publishable/anon keys are allowed here; NEVER use secret/service_role keys.
 window.TLP_TRANSFER_CONFIG = {
   supabaseUrl: "",
-  supabasePublishableKey: "",
-  accountEmail: ""
+  supabasePublishableKey: ""
 };
