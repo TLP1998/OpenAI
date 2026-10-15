@@ -1,51 +1,41 @@
-# TLP Transfer｜免费在线回复接入说明
+# TLP Transfer｜在线回复（单密码简易版）
 
-网页继续由 **GitHub Pages** 托管；云端身份验证及在线回复使用 **Supabase Free**。
-此文件夹不存储数据库密码、用户密码、secret key 或 service_role key。
+网页继续使用 **GitHub Pages**，回复同步和密码验证使用 **Supabase Free**。
+不需要独立服务器、复杂的成员审批或付费 GitHub 套餐；但需要先在 Supabase 创建一个免费的项目。
+目前 GitHub 上只部署了前端和数据库初始化脚本：**不创建并配置 Supabase 项目就不能发送在线回复。**
 
-## 1. 新建 Supabase 免费项目
-1. 打开 https://supabase.com/dashboard ，注册/登录，创建一个 Free 项目，例如 `tlp-transfer`。
-2. 等待数据库完成初始化。
-3. 打开 **SQL Editor**，粘贴并运行本目录 `database/setup.sql` 中的完整 SQL。
-4. 打开 **Authentication → Users → Add user**，创建本人使用的邮箱账号（必要时确认邮箱或完成邀请设置）。建议禁用公开注册：**Authentication → Settings/General → Allow new users to sign up = Off**（菜单文字可能有变化）。不要在 GitHub 文件里保存密码。
-5. 在 Supabase **SQL Editor** 中再次执行下面的授权 SQL，替换邮箱为刚才创建的用户邮箱：
+## 启用步骤（一次性）
 
-```sql
-insert into public.tlp_transfer_members(user_id, display_name, active)
-select id, 'Owner', true
-from auth.users
-where email = 'YOUR_ACCOUNT_EMAIL@example.com'
-on conflict (user_id) do update set active = true;
-```
-
-如果查不到用户，先到 Authentication → Users 确认账号已建立。需要授权第二个人时，也同样先创建账号，再添加成员记录。
-
-## 2. 把网页连接到 Supabase
-1. 在 Supabase 项目中点击 **Connect**，找到 **Project URL**（例如 `https://xxxx.supabase.co`）及 **Publishable key**（一般以 `sb_publishable_` 开头）。
-2. 编辑 GitHub 仓库文件 `ChatGPT/TLP/TLP Transfer/online-config.js`，分别填入两个字符串：
+1. 打开 https://supabase.com/dashboard ，注册登录并新建一个 **Free** 项目。
+2. 在 **SQL Editor** 执行本项目的 `database/setup.sql` 完整内容。
+3. 进入 **Authentication → Providers → Email**，确认邮箱密码（Email）登录可用。进入 Auth 的注册设置，**关闭公开注册（Allow new users to sign up）**。界面菜单可能随版本变化。
+4. 在 **Authentication → Users** 手动创建你自己的一个登录账号（邮箱 + 密码）。可以使用专用邮箱；确认账户已可用。对于网页用户，只需输入密码，邮箱在网页配置里预先指定。
+5. 在 Supabase 项目 **Connect** 或 **Settings → API Keys** 找到 Project URL 和 **publishable** key。
+6. 打开 GitHub 仓库文件 `ChatGPT/TLP/TLP Transfer/online-config.js`，填入三个值，保存到 `main`：
 ```js
 window.TLP_TRANSFER_CONFIG = {
   supabaseUrl: "https://YOUR-PROJECT.supabase.co",
-  supabasePublishableKey: "sb_publishable_YOUR_PUBLIC_KEY"
+  supabasePublishableKey: "sb_publishable_YOUR_PUBLIC_KEY",
+  accountEmail: "YOUR_ACCOUNT_EMAIL@example.com"
 };
 ```
-3. 保存提交到 `main`，等 GitHub Pages 部署完成后刷新中转站。此时出现邮箱密码登录框。
-4. 在允许的环境中输入 Supabase 账号密码登录。网页通过 Supabase Auth 验证身份，并经数据库行级安全策略判定账号是否被批准。
+   - **只允许将公开 URL、publishable key、邮箱写入源码。**
+   - 登录密码仅输入网页上的密码框，由 Supabase 服务器验证；不要把它写入 GitHub。
+   - 绝对不要在公开仓库中保存 secret key、service_role key、数据库密码或 Supabase 账号的管理密码。
+7. 等待 Pages 重新部署，然后在沙箱浏览器打开 [TLP Transfer](https://tlp1998.github.io/OpenAI/ChatGPT/TLP/TLP%20Transfer/)，输入设置的密码登录。
+8. 在测试消息 `TLP-20261015-001` 下输入「云端在线回复测试」，点击 **确认发送**，只有网页显示服务器返回成功才算提交。另一台设备登录后刷新在线回复，应能看到同一条记录。
 
-**只有 URL 和 publishable key 可以写入公开网页。这两个值不是登录密码。不要填写 secret key、service_role、数据库密码或账户密码。**
+## 实现方式
+- 网页通过 Supabase Auth 的密码登录接口获取用户 session。
+- 带认证令牌直接请求 Supabase REST 数据表，回复追加保存且由 Supabase 数据库 RLS 校验。
+- 其他已登录设备定期轮询，或点击「刷新在线回复」，取得相同记录；**不依赖 GitHub Pages 重新部署**。
+- 登录信息仅存于当前浏览器标签的 sessionStorage，关闭会话或退出登录后不再使用；页面源代码不含密码。
+- 旧 `threads.json` 的「GPT 回复记录」仍保留，属于手动归档，和新增的在线回复分开显示。
+- **GPT 不会自动接收 Supabase 新回复**：要让 GPT 做下一步，需要用户在聊天中提出「处理中转站在线回复」，并接入可读取该 Supabase 项目的工具。连接之前，GPT 仍可通过用户手动提供的非敏感文字处理。
 
-## 3. 使用在线回复
-- 在消息详情选择 **在线回复**，登录后输入非敏感文字（最多 1,000 字）。
-- 点击 **确认发布**，等待接口返回成功。失败时不能视为已提交，输入框保留原内容。
-- 另一个已经登录的设备刷新网页，或点击「刷新在线回复」，即可看到最新记录。页面活跃期间也会定期轮询。
-- 记录存于 Supabase 数据库，不依赖 GitHub Pages 再次部署或 GitHub `threads.json` 更新。
-- 已有 `threads.json` 仍作为旧版 GitHub 回复归档显示。
-- GPT 不会自动收到在线回复。若要 GPT 读取并操作，需要在聊天里要求“读取中转站在线回复”，并授权连接相应 Supabase 账号；或复制非敏感回复提交给 GPT。网页直接保存不等于 GPT 已完成后续任务。
-
-## 4. 安全与运维
-- GitHub Pages 整站和历史消息/附件目前仍是公开的，**在线回复仅对已授权 Supabase 成员可读**；不要往公开网页发布公司内部材料。
-- Supabase 免费项目会因低活跃而暂停，也有限额。暂停时在线回复会暂时不可用，GitHub 静态页面仍可阅读。
-- 如果沙箱无法向 `*.supabase.co` 发 HTTPS 请求，登录或同步将失败；联系公司网络管理员确认允许的地址，**不要绕过防护**。
-- 绝不要在沙箱输入敏感内容；仅限公司明确允许外发的非敏感文字。
-- 账号被盗用时在 Supabase Auth 管理界面处理账号，并将 `tlp_transfer_members.active` 设为 false；此后该账号的在线回复访问将被 RLS 拦截。
-- 云端回复是追加写入，没有网页修改或删除权限；需要纠正时另发一条回复说明。
+## 费用、安全和注意事项
+- Supabase Free 有使用配额与低活跃暂停机制，并非永久无条件的无限免费。超过免费限制时应停止升级，不自动转为付费。
+- 中转站的 GitHub Pages 静态消息/附件仍是公开的，在线回复仅登录后可读写。
+- 如果打开沙箱后登录/发送失败，确认公司的外网政策**允许**访问对应 `*.supabase.co` 地址的 HTTPS POST 请求，不能绕过公司限制。
+- 单密码账户意味着知道密码的人可以使用此账户；请使用独立密码，并不要共享到公开 GitHub。
+- 若以后需要细分权限，可升级账号分离和数据库成员控制，但目前不做。
