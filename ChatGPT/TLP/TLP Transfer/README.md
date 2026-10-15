@@ -1,54 +1,35 @@
 # TLP Transfer｜GPT 中转站
 
-基于 GitHub Pages 的成果收件箱，支持公开成果展示和可选的登录后在线回复。用于将个人设备上整理的**允许公开的非敏感资料**发布为网页及附件，供获准的外网沙箱浏览与下载。
+通过 **GitHub Pages + GitHub Issues + utterances** 构建的免费成果收件箱。
+- Pages：发布 GPT 消息正文、附件及收件箱索引。
+- Issues：保存在线回复，无需自建服务器、数据库、项目密码。
+- utterances：把 GitHub Issue 评论输入框嵌入网页。用户以 GitHub 账号登录即可发表。
+- 所有网页内容和 Issue 评论均是**公开的**，仅用于允许公开的非敏感信息。
 
-## 工作方式
-- 在 ChatGPT 中说“发到中转站”，明确分享范围；助手通过 GitHub 提交消息页面、附件并更新 `index.html` 的 `messages` 列表。
-- 公司电脑只能通过经批准的外网沙箱查看网页与下载文件；文件导入公司电脑应遵守相关安全政策。
-- 每条消息有唯一编号。网页生成关联消息编号的短回复口令（不超过 50 字符），供用户在获准的个人设备上手动发给 ChatGPT。
-- **手动口令**：备用回复框只复制文字，不保存、不上传，也不会自动通知 GPT。
-- **在线回复**：按 `ONLINE-SETUP.md` 连接 Supabase Free 后，可在网页密码登录、直接提交非敏感回复，其他已登录设备刷新同步；GPT 不会自动收到通知。
-- 公司内网到外网沙箱的 50 字限制应得到尊重，**不可通过编码、分段传输或隐写绕过**。不在网页输入公司机密或未经许可的信息。
+## 在线回复首次启用（仓库所有者执行一次）
+1. 用 GitHub 账号登录 `TLP1998`。
+2. 打开 https://github.com/apps/utterances ，点击 **Install**。
+3. 选择 `TLP1998` 账号，并选择 **Only select repositories**，勾选 `OpenAI` 仓库（建议避免授予其他仓库权限）。
+4. 回到 https://tlp1998.github.io/OpenAI/ChatGPT/TLP/TLP%20Transfer/ ，刷新页面，选择对应消息，找到 **填写并发送新回复**。
+5. 首次点击 GitHub 登录或授权 utterances。输入公开且非敏感的文字后点击评论区内的提交按钮。
+6. 打开另一设备，点击 **刷新回复记录**，应看到同一条回复。也可直接在 GitHub Issue 评论页看到。
 
-## 发布规范
-1. 新内容保存为 `messages/YYYY-MM-DD-NNN.html`，消息编号 `TLP-YYYYMMDD-NNN`。
-2. 附件放入 `attachments/` 并使用独立文件名；只发布确实已上传的附件。
-3. 在 `index.html` 内 `messages` 数组中追加元数据，并按日期倒序展示。
-4. 保留历史文件链接，不随意重命名或覆盖。
-5. TLP 项目总目录 `../index.html` 保持该项目入口。
-6. 发布后核对 GitHub 提交和页面，不把代码提交成功等同于网页部署成功。
+如果沙箱无法访问 `utteranc.es`、GitHub 登录或 GitHub API，改为点击 **在 GitHub 打开回复页**。这一链接直接使用 GitHub 原生评论页面，发送结果仍可在 Pages 中读取。如果外发权限受公司限制，遵守相关规定，不通过其他手段绕过。
 
-公开仓库与 Pages 均不适合存储公司资料、私人信息、令牌或其他秘密。
+## 消息发布与回复映射规则
+- 每条消息使用唯一编号，例如 `TLP-20261015-001`。
+- 消息全文存放 `messages/YYYY-MM-DD-NNN.html`；附件存放 `attachments/`。
+- 创建一条 GitHub Issue，标题包含相同的消息编号。测试编号 `TLP-20261015-001` 对应 **Issue #1**：https://github.com/TLP1998/OpenAI/issues/1 。
+- 更新本目录 `index.html` 中 `messages` 数组，为消息填入对应的 `issueNumber`。不同消息必须用不同 Issue，避免串线。
+- 在线回复保存为 Issue 评论；GitHub Pages 不需要因新评论重新部署。网页通过 `https://api.github.com/repos/TLP1998/OpenAI/issues/<ISSUE_NUMBER>/comments` 读取公开评论。
+- 历史 `threads.json` 为旧版手动归档，**与新在线评论不互通**。禁止把“已复制口令”说成“已发布评论”。
+- 新建项目时维护 TLP 总目录 `../index.html`，不要破坏现有日报项目。
+- 用户说“发到中转站”时，先确认内容可公开，成功发布消息及对应 Issue 后再报告成功。
+- GPT 可以在 GitHub Issue 中读取评论并按要求处理，但**不会自动感知或后台监听**。用户仍需要在聊天中主动发出“读取中转站新回复”指令，或设置未来的检查任务。
 
-## 备用方案 A：手动提交与 GitHub 归档（2026-10-15）
-
-**网页输入 ≠ 已发送**。在网页输入或点击“复制口令（不发送）”仅生成一条本地文本；网页不上传、不保存该回复。
-
-1. 在消息详情的回复框生成不超过 50 字的关联口令（须遵守公司有关信息流出的规则）。
-2. 通过合规方式，在手机或私人电脑的 ChatGPT 中主动提交口令，如：`中转站回复 TLP-20261015-001 继续处理`。
-3. ChatGPT 根据消息编号读取 GitHub 原消息、确认允许公开的提交内容，然后依次：
-   - 更新 `threads.json` 中该消息的 `replies`、`status`，且必须保留历史记录；
-   - 执行适当的后续任务；需要公开的结果附上 `results` 记录和对应 `link`，并更新状态；
-   - 更新消息正文或附件时同步更新中转站 `index.html` 的消息元数据；
-   - 只有 GitHub 提交成功才向用户确认“已发布”；不得仅凭收到口令声称其他设备已同步。
-4. 在其他设备打开中转站并点击“刷新回复记录”，从仓库 `threads.json` 加载状态、回复历史和 GPT 处理结果。网页无浏览器间实时推送，GitHub Pages 部署可能有延迟。
-
-### threads.json 数据格式
-```json
-{
-  "schema_version": 1,
-  "updated_at": "2026-10-15",
-  "threads": {
-    "TLP-20261015-001": {
-      "status": "待回复",
-      "replies": [],
-      "results": []
-    }
-  }
-}
-```
-
-`replies` 和 `results` 的单条记录格式：`{"date":"2026-10-15","by":"用户/GPT","text":"非敏感内容","link":"可选相对路径或 URL"}`。状态可为 `待回复`、`待处理`、`处理中`、`已完成`。无需把原始公司内网回复或机密信息复制到这里。
-
-TLP 项目总目录：`../index.html`，它已经包含 TLP Transfer 入口，方案 A 无需新增项目卡片。
-\n## 在线回复（可选免费服务）\n\n- `online-replies.js`：客户端密码登录、回复提交及同步。\n- `online-config.js`：公开的 Supabase 项目地址、publishable key 和预设账号邮箱；**不包含密码**。\n- `database/setup.sql`：由项目所有者在 Supabase SQL Editor 初始化在线回复表和权限。\n- `ONLINE-SETUP.md`：操作说明。\n- 未配置 Supabase 前，原有公开消息、附件、GitHub 回复历史和手动口令仍可使用，云端发送功能不可使用。\n
+## 维护与限制
+- utterances 本身免费，GitHub Issues 免费，当前公开仓库的 GitHub Pages 按 GitHub 免费服务条款使用。
+- 无独立密码登录：在线发表评论仍需 GitHub 登录（OAuth）。不支持匿名无凭据写入。
+- GitHub API 有调用限额；若网页读取评论失败，直接打开对应 Issue 查看。
+- 网页上传附件仍只通过个人 ChatGPT/GitHub 项目发布流程，不能从公司环境上传公司资料。
+- 公开评论不能存储公司秘密、内部数据、个人敏感信息。
