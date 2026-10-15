@@ -176,7 +176,7 @@
     root.append(el("h3","在线回复 · 跨设备同步"));
     if(!validSetup()){
       const msg=el("div","在线回复功能尚未激活：需要先配置免费的 Supabase 云端服务。原有消息、附件和手动回复仍可正常使用。","online-notice");
-      const guide=el("a","查看 3 步启用说明 →");
+      const guide=el("a","查看免费启用说明 →");
       guide.href="https://github.com/TLP1998/OpenAI/blob/main/ChatGPT/TLP/TLP%20Transfer/ONLINE-SETUP.md";
       guide.target="_blank";guide.rel="noopener noreferrer";
       root.append(msg,guide);
