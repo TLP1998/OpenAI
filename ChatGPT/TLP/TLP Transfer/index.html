@@ -6,8 +6,70 @@
 :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;color:#1e3451;background:#f3f6fa}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(115deg,#122d50,#265878);color:white;padding:32px max(18px,calc((100vw - 1100px)/2))}header a{color:#d4e7f8;text-decoration:none;font-size:14px}header h1{font-size:clamp(27px,4vw,37px);margin:12px 0 6px}header p{margin:0;font-size:14px;color:#d5e3ef}main{max-width:1100px;margin:auto;padding:25px 20px 55px}.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}input,select{font:inherit;background:white;padding:11px;border:1px solid #cad9e9;border-radius:9px;color:#253f5b}input{flex:1;min-width:200px}small,.hint{color:#637d96}.layout{display:grid;grid-template-columns:305px minmax(0,1fr);gap:18px}.panel{background:#fff;border:1px solid #dce7f1;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px #1738580a}.panel-head{padding:17px 20px;font-weight:700;border-bottom:1px solid #e5ecf3}.item{width:100%;display:block;text-align:left;font:inherit;background:#fff;border:0;border-bottom:1px solid #e6eef5;padding:18px;cursor:pointer;color:#253e58}.item:hover,.item.active{background:#eaf3fd}.item strong{display:block;font-size:15px}.item span{display:block;color:#73879b;font-size:12px;margin-top:7px}.detail{padding:24px}.detail h2{margin:10px 0 7px}.meta{font-size:12px;color:#64809b}.detail p{line-height:1.75}.attachments{padding:15px;background:#f2f7fb;border-radius:10px;margin:17px 0}.attachments a{display:block;padding-top:9px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:9px;font:inherit;font-size:14px;border:0;background:#1d5787;color:white;text-decoration:none;cursor:pointer}.btn.secondary{background:#e7eff8;color:#20537e}.buttons{display:flex;flex-wrap:wrap;gap:10px}.reply-area{border-top:1px solid #dfebf4;margin-top:24px;padding-top:20px}.notice{border:1px solid #cde1f1;background:#f0f7fd;border-radius:10px;padding:13px 14px;font-size:13px;line-height:1.8;margin:12px 0}.comments{margin:12px 0}.comment{border-left:3px solid #aac8e6;background:#f7faff;padding:12px 15px;border-radius:0 8px 8px 0;margin:10px 0}.comment p{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}.comment .who{font-size:12px;color:#647b93}.comment a{font-size:12px}.status{font-size:13px;color:#53728d;margin:10px 0}.utterances{max-width:none!important}.legacy{padding:12px 15px;border:1px dashed #d0dce7;border-radius:9px;color:#4b6178;font-size:13px;margin:12px 0}footer{font-size:12px;color:#72879b;line-height:1.8;margin-top:25px}a{color:#176399;overflow-wrap:anywhere}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7fb9ed;outline-offset:2px}@media(max-width:750px){.layout{grid-template-columns:1fr}.detail{padding:18px}main{padding:18px 14px 45px}header{padding:26px 17px}}
 .management{margin:0 0 17px;background:#fff;border:1px solid #dce7f1;border-radius:14px;padding:17px 19px}.management h2{font-size:17px;margin:0 0 9px}.management p{font-size:13px;line-height:1.7;margin:5px 0 12px;color:#56718b}.management label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}.management input,.management textarea,.management select{display:block;width:100%;max-width:100%;font:inherit;border:1px solid #cbd9e7;border-radius:8px;padding:10px;background:white;color:#243d59}.management textarea{min-height:85px;resize:vertical}.management .opt{font-size:13px;font-weight:400;display:flex;gap:9px;align-items:flex-start}.management input[type=checkbox]{width:auto;margin-top:3px}.manage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:16px}.manage-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}.manage-summary{white-space:pre-wrap;background:#f1f5fa;border:1px solid #dbe6ef;border-radius:9px;padding:12px;font-size:12px;line-height:1.7;overflow-wrap:anywhere}.manage-warning{font-size:12px;color:#80551e;background:#fff8e9;padding:10px;border-radius:8px;margin:12px 0}.danger{background:#a83e3e!important;color:white!important}.manage-inline{margin:17px 0;display:flex;gap:8px;flex-wrap:wrap}.comment .comment-manage{display:block;margin:7px 0;font-size:12px}.hidden{display:none!important}
 .tlp-admin-context{position:fixed;z-index:5000;max-height:calc(100dvh - 20px);overflow-y:auto;overscroll-behavior:contain;touch-action:manipulation;width:224px;background:white;color:#1e3451;border:1px solid #c9d6e3;border-radius:12px;box-shadow:0 8px 32px #18334a38;padding:8px}.tlp-admin-context-title{font-size:12px;color:#637d96;padding:8px 10px}.tlp-admin-context-action{display:block;width:100%;text-align:left;font:inherit;font-size:14px;background:white;color:#26455e;border:0;border-radius:6px;padding:11px;cursor:pointer}.tlp-admin-context-action:hover{background:#fbeeee;color:#8e3030}.tlp-admin-overlay{position:fixed;inset:0;z-index:5100;background:#142b4580;display:flex;align-items:center;justify-content:center;padding:17px}.tlp-admin-dialog{background:white;color:#1d334b;border-radius:15px;padding:23px;max-width:510px;width:100%;box-shadow:0 15px 55px #10243c50}.tlp-admin-dialog p{line-height:1.75;font-size:14px}.tlp-admin-dialog input{margin:12px 0;min-width:0}.tlp-admin-dialog .buttons{margin-top:13px}.tlp-admin-note{position:fixed;z-index:5200;bottom:15px;left:15px;right:15px;max-width:650px;margin:auto;color:white;padding:13px 18px;border-radius:10px;box-shadow:0 4px 23px #15283a49;white-space:pre-wrap;font-size:14px}
+
+/* 2026-10-16 visual refresh: consistent cards, readable spacing and mobile ergonomics */
+:root{--accent:#246ca3;--text:#203953;--muted:#6a8198;--line:#dce7f0;--surface:#fff}
+body{background:linear-gradient(180deg,#edf4fa 0,#f6f8fb 360px);color:var(--text)}
+header{padding-top:33px;padding-bottom:35px;background:linear-gradient(120deg,#102d4c 0%,#1f527a 64%,#27719b 100%)}
+header h1{letter-spacing:-.025em}
+header p{line-height:1.7}
+main{padding-top:22px}
+.tools{padding:14px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 15px #17385808}
+.tools input{min-width:180px}
+.tools select{max-width:180px}
+.tools .btn{white-space:nowrap}
+#counter{white-space:nowrap;font-weight:700;font-size:12px;color:#53728f}
+.panel{box-shadow:0 8px 26px #1738580d}
+.panel-head{display:flex;justify-content:space-between;align-items:center;background:#fcfdff;font-size:14px;letter-spacing:.02em}
+.item{position:relative;min-height:94px;padding:16px 18px 16px 19px;transition:background-color .15s}
+.item strong{line-height:1.48;font-weight:700}
+.item.active{background:#eaf4ff;box-shadow:inset 3px 0 #317db8}
+.item .item-summary{display:block;margin-top:8px;font-size:12px;color:#627e96;line-height:1.5}
+.item:hover{background:#f0f7ff}
+.detail{padding:27px}
+.detail h2{font-size:clamp(21px,2.6vw,27px);line-height:1.4;letter-spacing:-.015em}
+.detail>p{font-size:15px;color:#344e65}
+.meta{letter-spacing:.015em}
+.btn{min-height:39px;gap:5px;transition:filter .15s,transform .15s}
+.btn:hover{filter:brightness(.96)}
+.attachments{margin:22px 0;padding:17px;border:1px solid #d7e7f4;background:#f5faff}
+.attachments .attach-title{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
+.attachments .attach-count{font-size:12px;color:#5a7793;font-weight:500}
+.attach-empty{font-size:13px;color:#7890a5;margin-top:8px}
+.attachment-row{display:flex;align-items:center;gap:10px;border:1px solid #d9e5f0;background:#fff;border-radius:11px;padding:12px;margin-top:12px;flex-wrap:wrap}
+.attachment-icon{width:36px;height:36px;display:grid;place-items:center;flex:none;background:#eaf2fc;border-radius:10px;font-size:18px}
+.attachment-info{flex:1;min-width:150px;overflow-wrap:anywhere}
+.attachment-info strong{display:block;font-size:13px;line-height:1.5}
+.attachment-info span{display:block;font-size:11px;color:#73889d}
+.attachment-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.attachments .attachment-actions a{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;margin:0;background:#eaf2fb;border-radius:8px;color:#205c88;font-size:12px;font-weight:650;text-decoration:none}
+.attachments .attachment-actions a.primary-download{background:#246b9f;color:#fff}
+.reply-area h3{font-size:18px;margin-bottom:9px}
+.notice{line-height:1.65}
+.comments{display:grid;gap:10px}
+.comment{margin:0;border:1px solid #deebf5;border-left:3px solid #86b8df;background:#fafcff;border-radius:10px}
+.comment p{line-height:1.65}
+.manage-warning{line-height:1.7}
+@media(max-width:750px){
+ header{padding:24px 18px 28px}
+ main{padding:14px 12px 42px}
+ .tools{padding:12px;gap:8px}
+ .tools input{flex-basis:100%;min-width:0}
+ .tools select{flex:1;max-width:none;min-width:135px}
+ .tools .btn{flex:1;padding:10px 8px;font-size:12px}
+ .layout{gap:12px}
+ .panel-head{padding:13px 16px}
+ .item{min-height:76px;padding:13px 15px}
+ .detail{padding:19px 16px}
+ .attachment-row{align-items:flex-start}
+ .attachment-actions{width:100%}
+ .attachment-actions a{flex:1}
+ .buttons{gap:8px}
+ .buttons .btn{font-size:13px}
+ .tlp-admin-context{max-width:calc(100vw - 20px)}
+}
 </style></head><body>
-<header><a href="../index.html">← TLP 项目总目录</a><h1>📥 TLP Transfer</h1><p>GPT 中转站 · 成果阅读 · 附件下载 · GitHub 原生回复 · 跨设备查看</p></header>
+<header><a href="../index.html">← TLP 项目总目录</a><h1>📥 TLP Transfer</h1><p>公开资料中转站 · 消息阅读 · 附件下载 · GitHub 回复同步</p></header>
 <main>
 <div class="tools"><input id="search" type="search" placeholder="搜索标题 / 编号 / 关键词…" aria-label="搜索消息"><select id="filter" aria-label="消息类别"><option value="">全部类别</option><option value="系统测试">系统测试</option><option value="技术研究">技术研究</option><option value="文档资料">文档资料</option><option value="代码工具">代码工具</option></select><small id="counter"></small><button class="btn secondary" id="manageToggle" type="button">＋ 新增 / 管理</button><button class="btn secondary" id="syncDeleted" type="button" title="检查 GitHub 中已经删除的 Issue">↻ 同步删除状态</button></div>
 <section class="management hidden" id="manager"><h2>消息与回复管理</h2><p>当前版本不使用 Token。点击删除入口将打开 GitHub 官方网页；未登录时请在 GitHub 登录，随后通过评论或 Issue 菜单手动删除。GitHub Pages 无法直接读取 GitHub 登录状态或执行删除。完整消息还需分别清理 HTML、附件及收件箱索引。</p>
@@ -17,7 +79,7 @@
 <div id="replyFields" class="hidden"><label for="replyMessage">所属消息</label><select id="replyMessage"></select><label for="replyId">GitHub 评论 ID / 评论链接</label><input id="replyId" placeholder="粘贴 GitHub Issue 评论链接或评论 ID"><p class="hint">粘贴完整 GitHub 评论链接，可跳转定位；删除需要有权限的 GitHub 账号。</p></div></div>
 <div class="manage-warning">删除操作执行后可能无法恢复。请核对目标与专属附件；删除 Issue 不会自动删除中转站 HTML 和索引，关闭 Issue 不等于删除。</div>
 <div class="manage-actions" id="githubManageLinks"></div><div class="manage-summary" id="managePreview"></div><div class="manage-actions"><button class="btn" id="copyManage" type="button">复制 GitHub 清理步骤（不执行）</button><button class="btn secondary" id="closeManage" type="button">收起</button></div></section>
-<div class="layout"><section class="panel" aria-label="消息列表"><div class="panel-head">收件箱</div><div id="list"></div></section><section class="panel" aria-label="消息详情"><div id="detail" class="detail"></div></section></div>
+<div class="layout"><section class="panel" aria-label="消息列表"><div class="panel-head"><span>收件箱</span><small>选择消息查看详情</small></div><div id="list"></div></section><section class="panel" aria-label="消息详情"><div id="detail" class="detail"></div></section></div>
 <footer>支持在消息或回复上<strong>长按 / 鼠标右键</strong>打开管理菜单。当前为 GitHub 网页登录删除模式，无 Token 输入框。长按或右键后跳转 GitHub 官方网页完成操作，静态站无法使用浏览器中的 GitHub 登录状态直接写入。仅用于发布经许可公开的非敏感内容。网页及 GitHub Issue 评论均为公开信息。阅读无需登录；发表评论需登录 GitHub，密码由 GitHub 处理，本网站不保存密码。请遵守公司外发及沙箱使用规定。</footer>
 </main>
 <script>
@@ -39,8 +101,23 @@ const $=id=>document.getElementById(id), list=$("list"),detail=$("detail"),searc
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 function link(label,url,cls){const e=el("a",label,cls);e.href=url;e.rel="noopener noreferrer";return e}
 function add(node,...children){node.append(...children);return node}
-function showList(){const q=search.value.trim().toLowerCase(),c=filter.value;const rows=messages.filter(m=>(!c||m.category===c)&&(!q||[m.id,m.title,m.summary,m.category,...m.body].join(" ").toLowerCase().includes(q)));list.replaceChildren();$("counter").textContent=rows.length+" 条";if(!rows.length){list.append(el("p","没有符合条件的消息。","hint"));detail.replaceChildren();return}if(!rows.some(m=>m.id===current))current=rows[0].id;for(const m of rows){const b=el("button",undefined,"item"+(m.id===current?" active":""));b.type="button";b.dataset.tlpMessage=m.id;add(b,el("strong",m.title),el("span",m.date+" · "+m.id));b.onclick=()=>{current=m.id;showList()};list.append(b)}showDetail(messages.find(m=>m.id===current))}
-function showDetail(m){const token=++loadToken;detail.replaceChildren(el("div",m.category+" · "+m.date,"meta"),el("h2",m.title),el("div","消息编号："+m.id,"meta"));for(const p of m.body)detail.append(el("p",p));const actions=el("div",undefined,"buttons");actions.append(link("阅读完整消息",m.page,"btn secondary"));const del=el("button","管理 / 删除此消息","btn secondary");del.type="button";del.onclick=()=>showManager("delete",m.id);actions.append(del);detail.append(actions);const attachments=el("div",undefined,"attachments");attachments.append(el("strong","📎 附件下载"));for(const f of m.files)attachments.append(link("↓ "+f.name,f.url));detail.append(attachments);
+function showList(){const q=search.value.trim().toLowerCase(),c=filter.value;const rows=messages.filter(m=>(!c||m.category===c)&&(!q||[m.id,m.title,m.summary,m.category,...m.body].join(" ").toLowerCase().includes(q)));list.replaceChildren();$("counter").textContent=rows.length+" 条";if(!rows.length){list.append(el("p","没有符合条件的消息。","hint"));detail.replaceChildren();return}if(!rows.some(m=>m.id===current))current=rows[0].id;for(const m of rows){const b=el("button",undefined,"item"+(m.id===current?" active":""));b.type="button";b.dataset.tlpMessage=m.id;add(b,el("strong",m.title),el("span",m.date+" · "+m.id),el("span",m.summary,"item-summary"));b.onclick=()=>{current=m.id;showList()};list.append(b)}showDetail(messages.find(m=>m.id===current))}
+function showDetail(m){const token=++loadToken;detail.replaceChildren(el("div",m.category+" · "+m.date,"meta"),el("h2",m.title),el("div","消息编号："+m.id,"meta"));for(const p of m.body)detail.append(el("p",p));const actions=el("div",undefined,"buttons");actions.append(link("阅读完整消息",m.page,"btn secondary"));const del=el("button","管理 / 删除此消息","btn secondary");del.type="button";del.onclick=()=>showManager("delete",m.id);actions.append(del);detail.append(actions);const attachments=el("section",undefined,"attachments");
+const atHead=el("div",undefined,"attach-title");atHead.append(el("strong","📎 附件"),el("span",m.files.length+" 个文件","attach-count"));attachments.append(atHead);
+if(!m.files.length)attachments.append(el("div","当前消息没有附件。","attach-empty"));
+for(const f of m.files){
+ const row=el("div",undefined,"attachment-row");const icon=el("div","📄","attachment-icon");
+ const info=el("div",undefined,"attachment-info");info.append(el("strong",f.name),el("span","GitHub Pages 文件 · 可下载 / 预览"));
+ const acts=el("div",undefined,"attachment-actions");
+ // Only allow relative in-repository attachment paths; avoid arbitrary external redirects.
+ if(/^attachments\/[a-zA-Z0-9._\/-]+$/.test(f.url)&&!f.url.includes("..")){
+   const download=link("↓ 下载",f.url,"primary-download");download.setAttribute("download",f.url.split("/").pop());
+   const view=link("预览 ↗",f.url);view.target="_blank";
+   acts.append(download,view);
+ }else acts.append(el("span","附件链接无效，请联系发布者。","hint"));
+ row.append(icon,info,acts);attachments.append(row);
+}
+detail.append(attachments);
 const area=el("section",undefined,"reply-area");area.append(el("h3","在线回复 · 跨设备同步"));area.append(el("div","点击“前往 GitHub 发表评论”即可打开与此消息对应的 GitHub Issue，在 GitHub 登录后直接发表评论。返回中转站点击“刷新回复记录”，其他设备也能读取。无需插件、独立数据库或单独设置中转站密码。","notice"));
 const url="https://github.com/"+repo+"/issues/"+m.issueNumber;
 const actions2=el("div",undefined,"buttons");actions2.append(link("前往 GitHub 发表评论 ↗",url,"btn"));area.append(actions2);
@@ -68,4 +145,4 @@ manage.querySelectorAll("input,textarea,select").forEach(x=>x.addEventListener("
 $("copyManage").onclick=async()=>{const txt=manageCommand();try{await navigator.clipboard.writeText(txt);$("copyManage").textContent="已复制，请在 ChatGPT 提交";setTimeout(()=>$("copyManage").textContent="复制管理指令（不执行）",2300)}catch(e){const range=document.createRange();range.selectNodeContents(preview);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);$("copyManage").textContent="请手动复制已选文字"}};
 refreshManage();
 search.oninput=showList;filter.onchange=showList;const hash=decodeURIComponent(location.hash.substring(1));if(messages.some(x=>x.id===hash))current=hash;showList();
-</script><script src="admin-ui.js?v=menu-stable-20261016-5"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
+</script><script src="admin-ui.js?v=transfer-ui-20261016-6"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
