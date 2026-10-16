@@ -1,0 +1,41 @@
+name: Sync deleted TLP Issues
+
+on:
+  issues:
+    types: [deleted]
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+concurrency:
+  group: tlp-deleted-issues-sync
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Remove messages whose GitHub Issues were deleted
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/sync_tlp_deleted_issues.py
+      - name: Commit synchronized inbox
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "ChatGPT/TLP/TLP Transfer/index.html" "ChatGPT/TLP/TLP Transfer/messages/"
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Sync TLP Transfer with deleted GitHub Issues"
+          git push origin HEAD:main
