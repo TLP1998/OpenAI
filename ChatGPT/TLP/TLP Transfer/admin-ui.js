@@ -55,14 +55,17 @@ async function removeFile(path){let f;try{f=await getContent(path)}catch(e){if(/
 function removeRecord(html,id){
  const start=html.indexOf("const messages=[");const end=html.indexOf("];",start);
  if(start<0||end<0)throw Error("无法定位中转站消息索引");
- const text=html.slice(start+"const messages=[".length,end);
- // Match one authored message object by its unique id, without modifying surrounding scripts.
- const escaped=id.replace(/[.*+?^$\{\}()|[\]\\]/g,"\\$&");
- const pattern=new RegExp("(^|\\n)\\s*\\{\\s*\\n?\\s*id:\\""+escaped+"\"[\\s\\S]*?issueNumber:\\d+\\s*\\},?","m");
- const match=text.match(pattern);
- if(!match)throw Error("索引中不存在该消息，请刷新网页核对");
- const updated=text.replace(pattern,match[1]);
- return html.slice(0,start+"const messages=[".length)+updated.replace(/^\s*,/,"")+html.slice(end)
+ const body=html.slice(start+"const messages=[".length,end);
+ const marker='id:"'+id+'"';const position=body.indexOf(marker);
+ if(position<0)throw Error("索引中不存在该消息，请刷新页面核对");
+ const first=body.lastIndexOf("{",position);
+ const issuePos=body.indexOf("issueNumber:",position);
+ if(first<0||issuePos<0)throw Error("消息格式不符合预期");
+ const last=body.indexOf("}",issuePos);
+ if(last<0)throw Error("消息记录不完整");
+ const trailing=body[last+1]===","?1:0;
+ const next=body.slice(0,first)+body.slice(last+1+trailing);
+ return html.slice(0,start+"const messages=[".length)+next+html.slice(end)
 }
 async function deleteMessage(obj){
  if(busy)return;
