@@ -22,6 +22,12 @@
 <script>
 const repo="TLP1998/OpenAI";
 const messages=[{
+ id:"TLP-20261016-001",title:"如何验证沙箱是否能够访问 Cloudflare Worker？",date:"2026-10-16",category:"系统测试",
+ summary:"沙箱测试 Cloudflare HTTPS 访问、GET/POST 连接与错误排查步骤。",
+ body:["公司沙箱中应分别验证：能否访问 Cloudflare Worker 的实际 HTTPS 地址，以及能否向获准的接口提交非敏感 POST 请求。","先测试 workers.cloudflare.com 是否可达，但官网能打开不等于 *.workers.dev 可用。待有真实部署的 Worker 后，测试 200 OK、403、连接超时和 CORS 等情况。"],
+ page:"messages/2026-10-16-001.html",files:[],issueNumber:2
+},{
+
  id:"TLP-20261015-001",title:"TLP Transfer 功能验证消息",date:"2026-10-15",category:"系统测试",
  summary:"阅读完整回复、下载附件，并测试网页在线回复与跨设备同步。",
  body:["欢迎使用 TLP Transfer 中转站。这是公开且不含敏感信息的测试消息。","当前版本把每条消息的在线回复存储在 GitHub Issue 评论区。新回复不需要修改 GitHub Pages 文件，也无需单独的数据库。"],
