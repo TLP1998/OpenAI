@@ -79,4 +79,4 @@ manage.querySelectorAll("input,textarea,select").forEach(x=>x.addEventListener("
 $("copyManage").onclick=async()=>{const txt=manageCommand();try{await navigator.clipboard.writeText(txt);$("copyManage").textContent="已复制，请在 ChatGPT 提交";setTimeout(()=>$("copyManage").textContent="复制管理指令（不执行）",2300)}catch(e){const range=document.createRange();range.selectNodeContents(preview);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);$("copyManage").textContent="请手动复制已选文字"}};
 refreshManage();
 search.oninput=showList;filter.onchange=showList;const hash=decodeURIComponent(location.hash.substring(1));if(messages.some(x=>x.id===hash))current=hash;showList();
-</script><script src="admin-ui.js"></script><script>if(window.TLPAdmin)window.TLPAdmin.start({messages,showList});</script></body></html>
+</script><script src="admin-ui.js?v=tokenfree-20261016-2"></script><script>if(window.TLPAdmin)window.TLPAdmin.start({messages,showList});</script></body></html>
