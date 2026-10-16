@@ -24,12 +24,6 @@
 const repo="TLP1998/OpenAI";
 const messages=[{
 
- id:"TLP-20261016-002",title:"Cloudflare Worker 地址与沙箱访问测试",date:"2026-10-16",category:"系统测试",
- summary:"真实 Worker 地址、沙箱 GET 访问检查与后续 POST 测试方法。",
- body:["Cloudflare Worker 地址：https://openai.tangliping1998.workers.dev/ 。先在公司沙箱浏览器打开它，检查是否返回内容或 HTTP 错误。","若 GET 访问成功，再部署明确支持 POST 的测试接口。当前尚未确认该 Worker 的 POST 功能，不能认定匿名留言与删除已实现。"],
- page:"messages/2026-10-16-002.html",files:[],issueNumber:3
-},{
-
  id:"TLP-20261016-001",title:"如何验证沙箱是否能够访问 Cloudflare Worker？",date:"2026-10-16",category:"系统测试",
  summary:"沙箱测试 Cloudflare HTTPS 访问、GET/POST 连接与错误排查步骤。",
  body:["公司沙箱中应分别验证：能否访问 Cloudflare Worker 的实际 HTTPS 地址，以及能否向获准的接口提交非敏感 POST 请求。","先测试 workers.cloudflare.com 是否可达，但官网能打开不等于 *.workers.dev 可用。待有真实部署的 Worker 后，测试 200 OK、403、连接超时和 CORS 等情况。"],
