@@ -9,7 +9,7 @@
 </style></head><body>
 <header><a href="../index.html">← TLP 项目总目录</a><h1>📥 TLP Transfer</h1><p>GPT 中转站 · 成果阅读 · 附件下载 · GitHub 原生回复 · 跨设备查看</p></header>
 <main>
-<div class="tools"><input id="search" type="search" placeholder="搜索标题 / 编号 / 关键词…" aria-label="搜索消息"><select id="filter" aria-label="消息类别"><option value="">全部类别</option><option value="系统测试">系统测试</option><option value="技术研究">技术研究</option><option value="文档资料">文档资料</option><option value="代码工具">代码工具</option></select><small id="counter"></small><button class="btn secondary" id="manageToggle" type="button">＋ 新增 / 管理</button></div>
+<div class="tools"><input id="search" type="search" placeholder="搜索标题 / 编号 / 关键词…" aria-label="搜索消息"><select id="filter" aria-label="消息类别"><option value="">全部类别</option><option value="系统测试">系统测试</option><option value="技术研究">技术研究</option><option value="文档资料">文档资料</option><option value="代码工具">代码工具</option></select><small id="counter"></small><button class="btn secondary" id="manageToggle" type="button">＋ 新增 / 管理</button><button class="btn secondary" id="syncDeleted" type="button" title="检查 GitHub 中已经删除的 Issue">↻ 同步删除状态</button></div>
 <section class="management hidden" id="manager"><h2>消息与回复管理</h2><p>当前版本不使用 Token。点击删除入口将打开 GitHub 官方网页；未登录时请在 GitHub 登录，随后通过评论或 Issue 菜单手动删除。GitHub Pages 无法直接读取 GitHub 登录状态或执行删除。完整消息还需分别清理 HTML、附件及收件箱索引。</p>
 <div class="manage-grid"><div><label for="manageType">管理操作</label><select id="manageType"><option value="add">新增消息</option><option value="delete">删除 / 移除消息</option><option value="reply-delete">删除指定回复</option></select></div>
 <div id="addFields"><label for="addTitle">消息标题</label><input id="addTitle" maxlength="160" placeholder="例如：电池包 EMC 分析"><label for="addText">消息正文（仅限可公开内容）</label><textarea id="addText" maxlength="3000" placeholder="输入非敏感文字；如需附件，请在 ChatGPT 中另外附上文件。"></textarea></div>
@@ -74,4 +74,4 @@ manage.querySelectorAll("input,textarea,select").forEach(x=>x.addEventListener("
 $("copyManage").onclick=async()=>{const txt=manageCommand();try{await navigator.clipboard.writeText(txt);$("copyManage").textContent="已复制，请在 ChatGPT 提交";setTimeout(()=>$("copyManage").textContent="复制管理指令（不执行）",2300)}catch(e){const range=document.createRange();range.selectNodeContents(preview);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);$("copyManage").textContent="请手动复制已选文字"}};
 refreshManage();
 search.oninput=showList;filter.onchange=showList;const hash=decodeURIComponent(location.hash.substring(1));if(messages.some(x=>x.id===hash))current=hash;showList();
-</script><script src="admin-ui.js?v=github-login-20261016-3"></script><script>if(window.TLPAdmin)window.TLPAdmin.start({messages,showList});</script></body></html>
+</script><script src="admin-ui.js?v=issues-sync-20261016-4"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
