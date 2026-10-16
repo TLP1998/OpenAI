@@ -61,3 +61,14 @@
 6. 刷新 GitHub Pages 收件箱：确认目标不再显示、旧消息正文页面返回 404，其他消息正常；GitHub Pages 构建与缓存可能有延迟。
 
 **重要**：删除 Issue 不会自动删除独立 HTML 或收件箱索引，反过来也一样。删除当前分支的 HTML 不代表清除 Git 提交历史。静态站点不能安全地以无认证方式直接执行 GitHub 删除；不要在页面源码中保存 GitHub Token。
+
+## 右键/长按删除和已删除 Issue 同步（2026-10-16）
+
+- **列表消息**：桌面鼠标右键、手机长按约 0.65 秒可打开“删除这条中转站消息”操作菜单。
+- **已加载的评论**：在回复卡片右键/长按可选择“删除这条回复”；需要评论已从 `api.github.com` 成功读取。
+- **访问授权**：在私人设备上输入由 GitHub 生成、仅授予 `TLP1998/OpenAI` 访问权限的 Fine-grained personal access token。删除评论需要 Issues 写入；删除 HTML/索引需要 Contents 写入。令牌只在本次网页打开期间保存在 JavaScript 内存，不写入 HTML、仓库、localStorage、sessionStorage 或 URL。**公司沙箱不得输入私人 Token**。直接删除要求客户端能够访问 `api.github.com` 并且 GitHub API 允许该网页发起请求。
+- **删除单条回复**：网页请求 GitHub REST `DELETE /repos/TLP1998/OpenAI/issues/comments/{comment_id}`；GitHub 确认成功才移除本地回复卡片。
+- **删除整条中转站消息**：网页先调用 GitHub API 关闭仍存在的 Issue（**无法通过公开 REST API 永久删除整个 Issue**），再更新 `index.html` 消息数组并删除对应专属 HTML 文件。附件默认不删，以免误删共享附件；GitHub Pages 发布与缓存刷新可能延迟。请求连续发生，**不是事务操作**；若部分失败应根据页面提示与 GitHub 提交记录继续清理。
+- **GitHub 已手动删除的 Issue**：每次打开中转站，页面会尝试公开 API 检查每条关联 Issue。确认返回 HTTP 404 的消息会从当前浏览器收件箱列表中隐藏，不依赖静态索引立即重新部署；该效果是**运行时隐藏**，不会修改 GitHub Pages 已存在的索引、HTML 或附件。网络故障、403、速率限制时保留原条目，不会误当作删除。
+- **权限和安全**：不要在公开仓库源码、评论、测试截图或公司沙箱输入 Token。令牌本身是高敏感凭证，设备不可信时不要使用网页直接删除，而应使用 GitHub 原生账号操作。Token 可能会因为浏览器扩展、恶意脚本或站点被篡改而泄露；请尽量缩小其仓库范围、权限和有效期，并用完撤销。网页中间层不会帮助绕过 GitHub 身份认证。
+- **已删除 Issue 与永久删除的区别**：网页删除消息的操作只关闭 Issue 并删除静态入口与 HTML；要永久删除关联 Issue，仍须由有权限的仓库管理员使用 GitHub 网页执行 Delete issue。
