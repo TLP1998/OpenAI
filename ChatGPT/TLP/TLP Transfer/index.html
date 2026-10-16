@@ -7,6 +7,11 @@
 .management{margin:0 0 17px;background:#fff;border:1px solid #dce7f1;border-radius:14px;padding:17px 19px}.management h2{font-size:17px;margin:0 0 9px}.management p{font-size:13px;line-height:1.7;margin:5px 0 12px;color:#56718b}.management label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}.management input,.management textarea,.management select{display:block;width:100%;max-width:100%;font:inherit;border:1px solid #cbd9e7;border-radius:8px;padding:10px;background:white;color:#243d59}.management textarea{min-height:85px;resize:vertical}.management .opt{font-size:13px;font-weight:400;display:flex;gap:9px;align-items:flex-start}.management input[type=checkbox]{width:auto;margin-top:3px}.manage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:16px}.manage-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}.manage-summary{white-space:pre-wrap;background:#f1f5fa;border:1px solid #dbe6ef;border-radius:9px;padding:12px;font-size:12px;line-height:1.7;overflow-wrap:anywhere}.manage-warning{font-size:12px;color:#80551e;background:#fff8e9;padding:10px;border-radius:8px;margin:12px 0}.danger{background:#a83e3e!important;color:white!important}.manage-inline{margin:17px 0;display:flex;gap:8px;flex-wrap:wrap}.comment .comment-manage{display:block;margin:7px 0;font-size:12px}.hidden{display:none!important}
 .tlp-admin-context{position:fixed;z-index:5000;max-height:calc(100dvh - 20px);overflow-y:auto;overscroll-behavior:contain;touch-action:manipulation;width:224px;background:white;color:#1e3451;border:1px solid #c9d6e3;border-radius:12px;box-shadow:0 8px 32px #18334a38;padding:8px}.tlp-admin-context-title{font-size:12px;color:#637d96;padding:8px 10px}.tlp-admin-context-action{display:block;width:100%;text-align:left;font:inherit;font-size:14px;background:white;color:#26455e;border:0;border-radius:6px;padding:11px;cursor:pointer}.tlp-admin-context-action:hover{background:#fbeeee;color:#8e3030}.tlp-admin-overlay{position:fixed;inset:0;z-index:5100;background:#142b4580;display:flex;align-items:center;justify-content:center;padding:17px}.tlp-admin-dialog{background:white;color:#1d334b;border-radius:15px;padding:23px;max-width:510px;width:100%;box-shadow:0 15px 55px #10243c50}.tlp-admin-dialog p{line-height:1.75;font-size:14px}.tlp-admin-dialog input{margin:12px 0;min-width:0}.tlp-admin-dialog .buttons{margin-top:13px}.tlp-admin-note{position:fixed;z-index:5200;bottom:15px;left:15px;right:15px;max-width:650px;margin:auto;color:white;padding:13px 18px;border-radius:10px;box-shadow:0 4px 23px #15283a49;white-space:pre-wrap;font-size:14px}
 
+.attachment-filename{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.attachment-check[data-state="ok"]{color:#197447}
+.attachment-check[data-state="error"]{color:#ad2934}
+.attachment-check[data-state="warn"]{color:#926019}
+@media(max-width:750px){.attachment-info{min-width:0}.attachment-actions a{min-height:42px}}
 /* 2026-10-16 visual refresh: consistent cards, readable spacing and mobile ergonomics */
 :root{--accent:#246ca3;--text:#203953;--muted:#6a8198;--line:#dce7f0;--surface:#fff}
 body{background:linear-gradient(180deg,#edf4fa 0,#f6f8fb 360px);color:var(--text)}
@@ -112,7 +117,7 @@ const atHead=el("div",undefined,"attach-title");atHead.append(el("strong","📎 
 if(!m.files.length)attachments.append(el("div","当前消息暂无附件。","attach-empty"));
 for(const f of m.files){
  const row=el("div",undefined,"attachment-row");const icon=el("div","📄","attachment-icon");
- const info=el("div",undefined,"attachment-info");info.append(el("strong",f.name),el("span","GitHub Pages 文件 · 可下载 / 预览"));
+ const info=el("div",undefined,"attachment-info");info.append(el("strong",f.name),el("span",f.url.split("/").pop(),"attachment-filename"));const verify=el("span","正在检查文件…","attachment-check");info.append(verify);
  const acts=el("div",undefined,"attachment-actions");
  // Only allow relative in-repository attachment paths; avoid arbitrary external redirects.
  if(/^attachments\/[a-zA-Z0-9._\/-]+$/.test(f.url)&&!f.url.includes("..")){
@@ -121,6 +126,11 @@ for(const f of m.files){
    const fallback="https://github.com/"+repo+"/blob/main/ChatGPT/TLP/TLP%20Transfer/"+f.url.split("/").map(encodeURIComponent).join("/");
    const github=link("GitHub 备用 ↗",fallback,"attachment-fallback");github.target="_blank";
    acts.append(download,view,github);
+   fetch(f.url,{method:"HEAD",cache:"no-store"}).then(response=>{
+     if(token!==loadToken)return;
+     if(response.ok){verify.textContent="✓ 文件可访问";verify.dataset.state="ok"}
+     else{verify.textContent="文件访问异常：HTTP "+response.status;verify.dataset.state="error"}
+   }).catch(()=>{if(token===loadToken){verify.textContent="网络检查不可用，请尝试下载或 GitHub 备用";verify.dataset.state="warn"}});
  }else acts.append(el("span","附件链接无效，请联系发布者。","hint"));
  row.append(icon,info,acts);attachments.append(row);
 }
