@@ -68,6 +68,11 @@ main{padding-top:22px}
  .buttons .btn{font-size:13px}
  .tlp-admin-context{max-width:calc(100vw - 20px)}
 }
+.attachment-actions a.attachment-fallback{background:transparent;color:#59748a;text-decoration:underline;font-weight:500}
+.inbox-panel{align-self:start}
+@media(min-width:751px){.inbox-panel{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto}}
+@media(max-width:750px){.attachment-actions a.attachment-fallback{flex:1 1 100%;background:#f2f6fa;text-align:center}.item{touch-action:pan-y}}
+@media(prefers-reduced-motion:reduce){.item,.btn{transition:none}}
 </style></head><body>
 <header><a href="../index.html">← TLP 项目总目录</a><h1>📥 TLP Transfer</h1><p>公开资料中转站 · 消息阅读 · 附件下载 · GitHub 回复同步</p></header>
 <main>
@@ -104,7 +109,7 @@ function add(node,...children){node.append(...children);return node}
 function showList(){const q=search.value.trim().toLowerCase(),c=filter.value;const rows=messages.filter(m=>(!c||m.category===c)&&(!q||[m.id,m.title,m.summary,m.category,...m.body].join(" ").toLowerCase().includes(q)));list.replaceChildren();$("counter").textContent=rows.length+" 条";if(!rows.length){list.append(el("p","没有符合条件的消息。","hint"));detail.replaceChildren();return}if(!rows.some(m=>m.id===current))current=rows[0].id;for(const m of rows){const b=el("button",undefined,"item"+(m.id===current?" active":""));b.type="button";b.dataset.tlpMessage=m.id;add(b,el("strong",m.title),el("span",m.date+" · "+m.id),el("span",m.summary,"item-summary"));b.onclick=()=>{current=m.id;showList()};list.append(b)}showDetail(messages.find(m=>m.id===current))}
 function showDetail(m){const token=++loadToken;detail.replaceChildren(el("div",m.category+" · "+m.date,"meta"),el("h2",m.title),el("div","消息编号："+m.id,"meta"));for(const p of m.body)detail.append(el("p",p));const actions=el("div",undefined,"buttons");actions.append(link("阅读完整消息",m.page,"btn secondary"));const del=el("button","管理 / 删除此消息","btn secondary");del.type="button";del.onclick=()=>showManager("delete",m.id);actions.append(del);detail.append(actions);const attachments=el("section",undefined,"attachments");
 const atHead=el("div",undefined,"attach-title");atHead.append(el("strong","📎 附件"),el("span",m.files.length+" 个文件","attach-count"));attachments.append(atHead);
-if(!m.files.length)attachments.append(el("div","当前消息没有附件。","attach-empty"));
+if(!m.files.length)attachments.append(el("div","当前消息暂无附件。","attach-empty"));
 for(const f of m.files){
  const row=el("div",undefined,"attachment-row");const icon=el("div","📄","attachment-icon");
  const info=el("div",undefined,"attachment-info");info.append(el("strong",f.name),el("span","GitHub Pages 文件 · 可下载 / 预览"));
@@ -113,11 +118,13 @@ for(const f of m.files){
  if(/^attachments\/[a-zA-Z0-9._\/-]+$/.test(f.url)&&!f.url.includes("..")){
    const download=link("↓ 下载",f.url,"primary-download");download.setAttribute("download",f.url.split("/").pop());
    const view=link("预览 ↗",f.url);view.target="_blank";
-   acts.append(download,view);
+   const fallback="https://github.com/"+repo+"/blob/main/ChatGPT/TLP/TLP%20Transfer/"+f.url.split("/").map(encodeURIComponent).join("/");
+   const github=link("GitHub 备用 ↗",fallback,"attachment-fallback");github.target="_blank";
+   acts.append(download,view,github);
  }else acts.append(el("span","附件链接无效，请联系发布者。","hint"));
  row.append(icon,info,acts);attachments.append(row);
 }
-detail.append(attachments);
+if(m.files.length)detail.append(attachments);
 const area=el("section",undefined,"reply-area");area.append(el("h3","在线回复 · 跨设备同步"));area.append(el("div","点击“前往 GitHub 发表评论”即可打开与此消息对应的 GitHub Issue，在 GitHub 登录后直接发表评论。返回中转站点击“刷新回复记录”，其他设备也能读取。无需插件、独立数据库或单独设置中转站密码。","notice"));
 const url="https://github.com/"+repo+"/issues/"+m.issueNumber;
 const actions2=el("div",undefined,"buttons");actions2.append(link("前往 GitHub 发表评论 ↗",url,"btn"));area.append(actions2);
@@ -145,4 +152,4 @@ manage.querySelectorAll("input,textarea,select").forEach(x=>x.addEventListener("
 $("copyManage").onclick=async()=>{const txt=manageCommand();try{await navigator.clipboard.writeText(txt);$("copyManage").textContent="已复制，请在 ChatGPT 提交";setTimeout(()=>$("copyManage").textContent="复制管理指令（不执行）",2300)}catch(e){const range=document.createRange();range.selectNodeContents(preview);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);$("copyManage").textContent="请手动复制已选文字"}};
 refreshManage();
 search.oninput=showList;filter.onchange=showList;const hash=decodeURIComponent(location.hash.substring(1));if(messages.some(x=>x.id===hash))current=hash;showList();
-</script><script src="admin-ui.js?v=transfer-ui-20261016-6"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
+</script><script src="admin-ui.js?v=transfer-ui-20261016-7"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
