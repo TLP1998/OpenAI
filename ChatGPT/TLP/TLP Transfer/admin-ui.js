@@ -1,7 +1,7 @@
 /* TLP Transfer: token-free GitHub management menu. No credentials or write requests. */
 (()=>{"use strict";
 const repo="TLP1998/OpenAI",api="https://api.github.com/repos/"+repo;
-let popup=null;
+let popup=null, longPressUntil=0;
 const el=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;if(cls)n.className=cls;return n};
 const hide=()=>{if(popup){popup.remove();popup=null}};
 function notify(message){let n=document.getElementById("tlp-admin-note");if(!n){n=el("div",undefined,"tlp-admin-note");n.id="tlp-admin-note";document.body.append(n)}n.textContent=message;n.style.background="#23567a";n.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>n.hidden=true,7500)}
@@ -24,16 +24,58 @@ function menu(e,object){hide();popup=el("div",undefined,"tlp-admin-context");pop
   hide()
  };popup.append(copy);
  const cancel=el("button","取消","tlp-admin-context-action");cancel.type="button";cancel.onclick=hide;popup.append(cancel);
- document.body.append(popup);popup.style.left=Math.max(8,Math.min(e.clientX||12,window.innerWidth-238))+"px";popup.style.top=Math.max(8,Math.min(e.clientY||12,window.innerHeight-190))+"px";
+ // Attach invisibly, measure its real size, then reveal at a single stable position.
+ // Prefer below the finger/cursor; flip above when close to the viewport bottom.
+ popup.style.visibility="hidden";
+ popup.style.left="0px";popup.style.top="0px";
+ document.body.append(popup);
+ const rect=popup.getBoundingClientRect();
+ const viewport=window.visualViewport;
+ const leftEdge=viewport?viewport.offsetLeft:0, topEdge=viewport?viewport.offsetTop:0;
+ const width=viewport?viewport.width:window.innerWidth, height=viewport?viewport.height:window.innerHeight;
+ const gap=8, inset=10;
+ const x=Number.isFinite(e.clientX)?e.clientX:leftEdge+inset;
+ const y=Number.isFinite(e.clientY)?e.clientY:topEdge+inset;
+ const newX=Math.max(leftEdge+inset,Math.min(x,leftEdge+width-rect.width-inset));
+ const below=y+gap;
+ const newY=below+rect.height+inset<=topEdge+height
+   ? below : Math.max(topEdge+inset,y-rect.height-gap);
+ popup.style.left=Math.round(newX)+"px";
+ popup.style.top=Math.round(newY)+"px";
+ popup.style.visibility="visible";
 }
 function bind(node,object){
  if(node.dataset.tlpAdminBound)return;node.dataset.tlpAdminBound="1";
- node.addEventListener("contextmenu",e=>{e.preventDefault();menu(e,object)});
- let timer=null,start=null;
- node.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;const t=e.touches[0];start={x:t.clientX,y:t.clientY};timer=setTimeout(()=>{timer=null;menu(start,object)},650)},{passive:true});
- node.addEventListener("touchmove",e=>{if(!start||!e.touches.length)return;const t=e.touches[0];if(Math.abs(t.clientX-start.x)>12||Math.abs(t.clientY-start.y)>12){clearTimeout(timer);timer=null}},{passive:true});
- for(const event of ["touchend","touchcancel"])node.addEventListener(event,()=>{clearTimeout(timer);timer=null},{passive:true});
+ node.addEventListener("contextmenu",e=>{
+   e.preventDefault();
+   // Some mobile browsers fire a native contextmenu after our touch timer.
+   if(Date.now()<longPressUntil)return;
+   menu({clientX:e.clientX,clientY:e.clientY},object);
+ });
+ let timer=null,start=null,triggered=false;
+ function clear(){if(timer!==null)clearTimeout(timer);timer=null}
+ node.addEventListener("touchstart",e=>{
+   clear();triggered=false;
+   if(e.touches.length!==1)return;
+   const t=e.touches[0];start={x:t.clientX,y:t.clientY};
+   timer=setTimeout(()=>{
+     timer=null;triggered=true;longPressUntil=Date.now()+1000;
+     menu({clientX:start.x,clientY:start.y},object);
+   },650);
+ },{passive:true});
+ node.addEventListener("touchmove",e=>{
+   if(!start||!e.touches.length)return;
+   const t=e.touches[0];
+   if(Math.abs(t.clientX-start.x)>10||Math.abs(t.clientY-start.y)>10)clear();
+ },{passive:true});
+ node.addEventListener("touchend",clear,{passive:true});
+ node.addEventListener("touchcancel",clear,{passive:true});
+ // Do not activate the underlying message after the long-press menu appears.
+ node.addEventListener("click",e=>{
+   if(triggered&&Date.now()<longPressUntil){e.preventDefault();e.stopPropagation();triggered=false}
+ },true);
 }
+
 function start({messages,showList}){
  const list=document.getElementById("list"),detail=document.getElementById("detail");
  function apply(){
