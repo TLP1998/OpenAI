@@ -75,7 +75,7 @@ async function deleteMessage(obj){
  busy=true;let stages=[];
  try{
    // Close first: prevents active discussion while index and document changes take effect.
-   try{await req("/issues/"+m.issueNumber,"PATCH",{state:"closed",state_reason:"not_planned"});stages.push("Issue 已关闭")}catch(e){if(/HTTP 404/.test(e.message))stages.push("Issue 已不存在");else throw e}
+   try{await req("/issues/"+m.issueNumber,"PATCH",{state:"closed",state_reason:"not_planned"});stages.push("Issue 已关闭")}catch(e){if(/HTTP (404|410)\b/.test(e.message))stages.push("Issue 已删除，跳过关闭");else throw e}
    const file=await getContent(indexFile);const old=utf8b64(file.content);const changed=removeRecord(old,m.id);
    await req("/contents/"+indexFile.split("/").map(encodeURIComponent).join("/"),"PUT",{message:"TLP Transfer: remove message "+m.id+" from inbox",content:b64utf8(changed),sha:file.sha,branch:"main"});stages.push("收件箱索引已移除");
    if(m.page){await removeFile(base+m.page);stages.push("HTML 已删除")}
@@ -121,7 +121,7 @@ function start(opts){
  const check=async()=>{
    const removed=[];
    for(const m of [...messages]){
-    try{const r=await fetch(api+"/issues/"+m.issueNumber,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});if(r.status===404)removed.push(m.id)}
+    try{const r=await fetch(api+"/issues/"+m.issueNumber,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});if(r.status===404||r.status===410)removed.push(m.id)}
     catch(e){}
    }
    if(removed.length){
