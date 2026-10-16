@@ -53,3 +53,13 @@
 - GitHub `api.github.com` 在网络不可达、被限流或返回 403 时，收件箱运行时隐藏和评论同步可能失败；不能将此类错误视为消息已删除。
 - 无独立后端和 OAuth 的情况下，无法同时实现 GitHub 官方登录和在静态中转站内“一键直接删除”。
 - 请撤销此前暴露在聊天中的所有旧 GitHub PAT。当前中转站不再使用它们。
+
+## Issue 删除与静态中转站自动同步（2026-10-16）
+
+已启用两层机制：
+
+1. **即时显示同步**：在 GitHub Issue 中永久删除后，返回 TLP Transfer 页面（聚焦或重新显示）会再次查询对应 Issue；收到明确 404/410 则从当前页面隐藏。顶部「↻ 同步删除状态」可手动触发。网络故障或 403 不会误删。
+2. **仓库静态文件同步**：仓库工作流 `.github/workflows/sync-tlp-deleted-issues.yml` 监听 GitHub Issues 的 `deleted` 事件，每 30 分钟定时巡检，还支持 GitHub Actions 页面手动 `Run workflow`。任务使用 GitHub Actions **内置 GITHUB_TOKEN**（不是用户 PAT）查询 Issue、删除对应索引项和专属消息 HTML，并提交回 `main`。
+3. **保护范围**：不会删附件（可能共享），不会处理仅关闭的 Issue，不会清空其他消息，不会从 Git 历史擦除已删除文件。
+
+**前提及限制**：仓库须允许 GitHub Actions 运行及工作流向 `main` 写入；如果 GitHub Actions 没有写权限、分支保护阻止推送、事件延迟或 Pages 部署延迟，需在 Actions 中查看 `Sync deleted TLP Issues` 的运行情况。计划任务并非严格准点。仅靠浏览器隐藏并不意味着静态仓库已清理完成。
