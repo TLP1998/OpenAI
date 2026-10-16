@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>如何验证沙箱是否能够访问 Cloudflare Worker｜TLP Transfer</title>
+<style>body{margin:0;background:#f3f6fa;color:#1d344f;font:16px/1.8 -apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}main{max-width:880px;margin:35px auto;padding:32px;background:#fff;border-radius:16px;box-shadow:0 6px 25px #12385a12}h1{line-height:1.4}h2{margin-top:29px}a{color:#1b629b}.meta{color:#647a92;font-size:13px}.box{background:#eff6fd;border:1px solid #d2e5f6;border-radius:10px;padding:15px;margin:16px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dce7f1;padding:11px;text-align:left}th{background:#f1f6fb}code{background:#eff3f8;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}footer{margin-top:30px;border-top:1px solid #dce6ef;padding-top:15px;font-size:13px;color:#647a92}@media(max-width:700px){main{margin:12px;padding:19px}table{font-size:12px}td,th{padding:8px}}</style></head><body><main>
+<a href="../index.html">← 返回 TLP Transfer 中转站</a>
+<h1>如何验证沙箱是否能够访问 Cloudflare Worker？</h1>
+<p class="meta">消息编号：TLP-20261016-001 · 2026-10-16 · 系统测试 / 网络连通性</p>
+<p>可以直接在公司沙箱浏览器中验证，不需要安装软件、登录账号或修改电脑配置。需要区分两件事：<strong>能否访问 Worker HTTPS 地址</strong>以及<strong>是否允许向该地址发送 HTTPS POST 请求</strong>。</p>
+<h2>第一步：初步验证网络可达</h2>
+<p>在沙箱浏览器中打开 <a href="https://workers.cloudflare.com/" target="_blank" rel="noopener noreferrer">https://workers.cloudflare.com/</a>。</p>
+<div class="box">如果网站能够打开，只能说明 Cloudflare Workers 官方网站至少部分可访问；<strong>不能证明 <code>*.workers.dev</code> 域名或实际 Worker 接口可以访问。</strong></div>
+<p>下一步需要使用一个实际部署的 Worker 测试地址。由于目前尚未部署专用测试 Worker，不能把形如 <code>https://tlp-test.某账号.workers.dev</code> 的示例地址当作有效接口。</p>
+<h2>第二步：验证能否发送非敏感文字</h2>
+<p>待专用测试 Worker 实际部署后，通过经批准的测试页面发送一条不含敏感内容的消息，例如：</p>
+<div class="box">TLP Transfer 网络连通性测试</div>
+<p>点击「发送测试」，检查接口返回值；建议测试服务只回显状态，不存储数据。</p>
+<table><thead><tr><th>结果</th><th>说明</th></tr></thead><tbody>
+<tr><td>返回 <code>200 OK</code></td><td>测试接口响应成功，具备进一步实施条件；仍需核实实际发送内容和网络策略</td></tr>
+<tr><td>网页可打开，POST 失败</td><td>可能有提交请求限制或接口配置问题</td></tr>
+<tr><td>返回 <code>403 Forbidden</code></td><td>可能被网络访问策略或服务器权限设置拒绝</td></tr>
+<tr><td>连接超时、网站被拦截</td><td>可能存在网络策略、DNS 或连接问题</td></tr>
+<tr><td>浏览器提示 <code>CORS</code> 错误</td><td>可能是接口跨域配置问题，不能直接判定为网络封锁</td></tr>
+</tbody></table>
+<h2>接下来如何操作？</h2>
+<p>先在公司沙箱访问 Cloudflare Workers 官网，反馈「可以打开 / 被拦截 / 一直加载失败」。如果可达，再创建一个真实的、只用于非敏感内容验证的 Worker 接口，进一步测试 GET 和 POST。任何进一步网络访问应符合公司批准的范围。</p>
+<footer>本消息为公开的网络测试说明，不包含公司内部资料，也不提供绕过网络限制的方案。<a href="https://github.com/TLP1998/OpenAI/issues/2">查看关联 GitHub 回复主题 #2</a>。</footer>
+</main></body></html>
