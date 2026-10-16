@@ -75,12 +75,18 @@ async function deleteMessage(obj){
  busy=true;let stages=[];
  try{
    // Close first: prevents active discussion while index and document changes take effect.
-   try{await req("/issues/"+m.issueNumber,"PATCH",{state:"closed",state_reason:"not_planned"});stages.push("Issue 已关闭")}catch(e){if(/HTTP (404|410)\b/.test(e.message))stages.push("Issue 已删除，跳过关闭");else throw e}
+   try{await req("/issues/"+m.issueNumber,"PATCH",{state:"closed",state_reason:"not_planned"});stages.push("Issue 已关闭")}catch(e){
+     if(/HTTP (404|410)\b/.test(e.message))stages.push("Issue 已删除，跳过关闭");
+     else if(/HTTP 403\b/.test(e.message)){
+       stages.push("Issue 关闭权限不足，未修改 Issue");
+       note("GitHub Issues 权限不足（403）。继续尝试清理收件箱索引与 HTML；原 Issue 仍可能公开存在。",true);
+     }else throw e
+   }
    const file=await getContent(indexFile);const old=utf8b64(file.content);const changed=removeRecord(old,m.id);
    await req("/contents/"+indexFile.split("/").map(encodeURIComponent).join("/"),"PUT",{message:"TLP Transfer: remove message "+m.id+" from inbox",content:b64utf8(changed),sha:file.sha,branch:"main"});stages.push("收件箱索引已移除");
    if(m.page){await removeFile(base+m.page);stages.push("HTML 已删除")}
-   obj.data.splice(obj.data.findIndex(x=>x.id===m.id),1);obj.render();hide();note(m.id+" 清理完成："+stages.join("、")+"。附件未删除，GitHub Pages 更新可能延迟。");
- }catch(e){note(m.id+" 部分执行结果："+stages.join("、")+"；异常："+e.message,true)}
+   obj.data.splice(obj.data.findIndex(x=>x.id===m.id),1);obj.render();hide();note(m.id+" 中转站清理结果："+stages.join("、")+"。附件未删除；如 Issue 权限不足，Issue 仍需在 GitHub 手动处理。GitHub Pages 更新可能延迟。");
+ }catch(e){note(m.id+" 部分执行结果："+(stages.join("、")||"无")+"；异常："+e.message+(/HTTP 403\\b/.test(e.message)?"。请核对 Fine-grained Token 的 Resource owner、Only select repositories 及 Contents/Issues 写入权限。":"")+"。如果已经修改部分文件，请先刷新页面再重试。",true)}
  finally{busy=false}
 }
 function showMenu(e,obj){
