@@ -1,0 +1,8 @@
+{
+  // Root-level config for the Cloudflare GitHub-connected build.
+  // GitHub Pages content under ChatGPT/TLP is unchanged.
+  "name": "openai",
+  "main": "cloudflare/tlp-connectivity-worker.js",
+  "compatibility_date": "2026-10-16",
+  "workers_dev": true
+}
