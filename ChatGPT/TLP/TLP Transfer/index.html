@@ -74,6 +74,11 @@ main{padding-top:22px}
  .tlp-admin-context{max-width:calc(100vw - 20px)}
 }
 .attachment-actions a.attachment-fallback{background:transparent;color:#59748a;text-decoration:underline;font-weight:500}
+.attachment-health{font-size:12px;color:#60788f;flex-basis:100%;line-height:1.5}
+.attachment-health.good{color:#2b7551}.attachment-health.error{color:#ad443c}
+.attachment-row:focus-within{outline:2px solid #9bc6e8;outline-offset:2px}
+.detail h2{overflow-wrap:anywhere}
+@media(max-width:750px){.reply-area .btn{min-height:42px}.attachment-actions a{min-height:40px}}
 .inbox-panel{align-self:start}
 @media(min-width:751px){.inbox-panel{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto}}
 @media(max-width:750px){.attachment-actions a.attachment-fallback{flex:1 1 100%;background:#f2f6fa;text-align:center}.item{touch-action:pan-y}}
@@ -111,6 +116,22 @@ const $=id=>document.getElementById(id), list=$("list"),detail=$("detail"),searc
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 function link(label,url,cls){const e=el("a",label,cls);e.href=url;e.rel="noopener noreferrer";return e}
 function add(node,...children){node.append(...children);return node}
+function readableSize(n){if(!Number.isFinite(n)||n<0)return "";return n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(1)+" MB"}
+async function downloadAttachment(url,filename,status,anchor){
+ status.className="attachment-health";status.textContent="正在获取附件，请稍候…";anchor.setAttribute("aria-busy","true");
+ try{
+   const res=await fetch(url,{cache:"no-store"});
+   if(!res.ok)throw Error("HTTP "+res.status);
+   const type=res.headers.get("content-type")||"";
+   const expected=[".txt",".pdf",".doc",".docx",".xls",".xlsx",".ppt",".pptx",".zip",".png",".jpg",".jpeg"];
+   if(type.includes("text/html")&&expected.some(ext=>filename.toLowerCase().endsWith(ext)))throw Error("收到网页而不是附件文件");
+   const blob=await res.blob();const tempUrl=URL.createObjectURL(blob);
+   const a=document.createElement("a");a.href=tempUrl;a.download=filename||"attachment";a.style.display="none";
+   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(tempUrl),60000);
+   status.className="attachment-health good";status.textContent="文件已交给浏览器下载（"+readableSize(blob.size)+"）。请检查下载列表。";
+ }catch(error){status.className="attachment-health error";status.textContent="下载未完成："+error.message+"。请使用「预览」或「GitHub 备用」。"}
+ finally{anchor.removeAttribute("aria-busy")}
+}
 function showList(){const q=search.value.trim().toLowerCase(),c=filter.value;const rows=messages.filter(m=>(!c||m.category===c)&&(!q||[m.id,m.title,m.summary,m.category,...m.body].join(" ").toLowerCase().includes(q)));list.replaceChildren();$("counter").textContent=rows.length+" 条";if(!rows.length){list.append(el("p","没有符合条件的消息。","hint"));detail.replaceChildren();return}if(!rows.some(m=>m.id===current))current=rows[0].id;for(const m of rows){const b=el("button",undefined,"item"+(m.id===current?" active":""));b.type="button";b.dataset.tlpMessage=m.id;add(b,el("strong",m.title),el("span",m.date+" · "+m.id),el("span",m.summary,"item-summary"));b.onclick=()=>{current=m.id;showList()};list.append(b)}showDetail(messages.find(m=>m.id===current))}
 function showDetail(m){const token=++loadToken;detail.replaceChildren(el("div",m.category+" · "+m.date,"meta"),el("h2",m.title),el("div","消息编号："+m.id,"meta"));for(const p of m.body)detail.append(el("p",p));const actions=el("div",undefined,"buttons");actions.append(link("阅读完整消息",m.page,"btn secondary"));const del=el("button","管理 / 删除此消息","btn secondary");del.type="button";del.onclick=()=>showManager("delete",m.id);actions.append(del);detail.append(actions);const attachments=el("section",undefined,"attachments");
 const atHead=el("div",undefined,"attach-title");atHead.append(el("strong","📎 附件"),el("span",m.files.length+" 个文件","attach-count"));attachments.append(atHead);
@@ -121,11 +142,12 @@ for(const f of m.files){
  const acts=el("div",undefined,"attachment-actions");
  // Only allow relative in-repository attachment paths; avoid arbitrary external redirects.
  if(/^attachments\/[a-zA-Z0-9._\/-]+$/.test(f.url)&&!f.url.includes("..")){
-   const download=link("↓ 下载",f.url,"primary-download");download.setAttribute("download",f.url.split("/").pop());
+   const download=link("↓ 下载",f.url,"primary-download");const filename=f.url.split("/").pop();download.setAttribute("download",filename);
+   const status=el("span","文件将保存到浏览器下载目录。","attachment-health");download.onclick=e=>{e.preventDefault();downloadAttachment(f.url,filename,status,download)};
    const view=link("预览 ↗",f.url);view.target="_blank";
    const fallback="https://github.com/"+repo+"/blob/main/ChatGPT/TLP/TLP%20Transfer/"+f.url.split("/").map(encodeURIComponent).join("/");
    const github=link("GitHub 备用 ↗",fallback,"attachment-fallback");github.target="_blank";
-   acts.append(download,view,github);
+   acts.append(download,view,github,status);
    fetch(f.url,{method:"HEAD",cache:"no-store"}).then(response=>{
      if(token!==loadToken)return;
      if(response.ok){verify.textContent="✓ 文件可访问";verify.dataset.state="ok"}
@@ -162,4 +184,4 @@ manage.querySelectorAll("input,textarea,select").forEach(x=>x.addEventListener("
 $("copyManage").onclick=async()=>{const txt=manageCommand();try{await navigator.clipboard.writeText(txt);$("copyManage").textContent="已复制，请在 ChatGPT 提交";setTimeout(()=>$("copyManage").textContent="复制管理指令（不执行）",2300)}catch(e){const range=document.createRange();range.selectNodeContents(preview);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);$("copyManage").textContent="请手动复制已选文字"}};
 refreshManage();
 search.oninput=showList;filter.onchange=showList;const hash=decodeURIComponent(location.hash.substring(1));if(messages.some(x=>x.id===hash))current=hash;showList();
-</script><script src="admin-ui.js?v=transfer-ui-20261016-7"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
+</script><script src="admin-ui.js?v=transfer-ui-20261016-8"></script><script>if(window.TLPAdmin){window.TLPAdmin.start({messages,showList});document.getElementById("syncDeleted").onclick=()=>window.TLPAdmin.sync();}</script></body></html>
