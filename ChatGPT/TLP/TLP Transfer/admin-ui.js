@@ -42,9 +42,32 @@ function start({messages,showList}){
  }
  const obs=new MutationObserver(apply);obs.observe(list,{subtree:true,childList:true});obs.observe(detail,{subtree:true,childList:true});apply();
  document.addEventListener("click",e=>{if(popup&&!popup.contains(e.target))hide()});document.addEventListener("keydown",e=>{if(e.key==="Escape")hide()});
- // Hide only on a definitive deleted-Issue response. Do not treat 403/network failures as deletion.
- (async()=>{const deleted=[];for(const m of [...messages]){try{const r=await fetch(api+"/issues/"+m.issueNumber,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});if(r.status===410||r.status===404)deleted.push(m.id)}catch(e){}}
- if(deleted.length){for(const id of deleted){const index=messages.findIndex(m=>m.id===id);if(index>=0)messages.splice(index,1)}showList();notify(deleted.length+" 条已删除 Issue 对应的消息已从当前收件箱隐藏（静态文件未删除）。")}})();
+ // Recheck when returning from the GitHub tab as well as on first load.
+ // Only 404/410 confirms deletion. Network failures and rate limits never delete.
+ let lastCheck=0, checking=false;
+ async function sync(force=false){
+   if(checking||(!force&&Date.now()-lastCheck<20000))return;
+   checking=true;lastCheck=Date.now();const removed=[];
+   try{
+     for(const m of [...messages]){
+       try{
+         const r=await fetch(api+"/issues/"+m.issueNumber+"?tlp_sync="+Date.now(),{
+           headers:{Accept:"application/vnd.github+json"},cache:"no-store"
+         });
+         if(r.status===404||r.status===410)removed.push(m.id);
+       }catch(e){/* Keep messages if connection to GitHub API fails. */}
+     }
+     if(removed.length){
+       for(const id of removed){const index=messages.findIndex(m=>m.id===id);if(index>=0)messages.splice(index,1)}
+       showList();notify(removed.length+" 条已删除 Issue 对应的消息已同步隐藏。静态文件将由 GitHub Actions 清理。");
+     }else if(force){notify("检查完成：未发现新删除的 GitHub Issue。")}
+   }finally{checking=false}
+ }
+ window.TLPAdmin.sync=()=>sync(true);
+ window.addEventListener("focus",()=>sync());
+ window.addEventListener("pageshow",()=>sync());
+ document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")sync()});
+ sync(true);
 }
 window.TLPAdmin={start};
 })();
