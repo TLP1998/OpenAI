@@ -12,6 +12,8 @@
 | [V3](./V3/) | **单 APK**：车控主界面与三个独立桌面/语音入口 | 待小米 HyperOS 实机验证 | [V3 发布页](https://github.com/TLP1998/OpenAI/releases/tag/byd-xiaoai-v3) |
 | [V3.1](./V3.1/) | **单 APK、单图标，内置可修改的语音口令与系统语音识别** | 正在测试，小爱单句直达仍未实现 | [V3.1 APK](https://github.com/TLP1998/OpenAI/releases/tag/byd-xiaoai-v3-1) |
 
+| [V4.0](./V4.0/) | 巴法云空调设备、语音指令路由及更新日志 | 开发中，尚未发布 APK | [V4.0 开发文档](./V4.0/) |
+
 ## 重要约定
 - **单 APK 多桌面入口**是 Android 系统支持的技术模式，但超级小爱未必把它们索引为不同 App，V3 必须在小米15上实测。
 - V2.2 是已验证可用的回退方案；**不要在 V3 验证成功之前卸载它**。
@@ -48,3 +50,8 @@ ChatGPT/TLP/BYD Assistant/
 
 ## V3.1 的小爱联动边界
 修改 V3.1 应用内口令只影响 App 自己的匹配和执行，不能自动注册为小米超级小爱的自定义技能。V3.1 的实际流程是先说「打开小笛车控助手APP」，再说已保存的口令。系统级一句话直达仍待专门适配。
+
+## 源码与作者鸣谢（2026-10-17）
+- [fm1223/byd-android](https://github.com/fm1223/byd-android)，作者 **fm1223**：原版中国区比亚迪车辆助手、车控协议与巴法 MQTT 联动来源。
+- [jkaberg/pyBYD](https://github.com/jkaberg/pyBYD)，作者 **jkaberg**：车辆 API 功能调研参考，未集成其 Python 代码。
+- 新版更改：[V4.0 更新记录](./V4.0/CHANGELOG.md)。派生发布需核对与保留上游许可证、版权声明。
