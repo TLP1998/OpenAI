@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Apply explicit, bounded changes to pinned fm1223/byd-android source."""
+from pathlib import Path
+import re
+import shutil
+import sys
+
+repo = Path(sys.argv[1]).resolve()
+overlay = Path(sys.argv[2]).resolve()
+app = repo / "app"
+def edit(path, old, new, count=1):
+    p = app / path
+    content = p.read_text(encoding="utf8")
+    if content.count(old) != count:
+        raise RuntimeError(f"Upstream changed: expected {count} matches of {old[:80]!r} in {p}, got {content.count(old)}")
+    p.write_text(content.replace(old,new,count),encoding="utf8")
+
+edit("build.gradle.kts", 'applicationId = "dev.vehiclebridge.byd"', 'applicationId = "dev.vehiclebridge.byd.xiaoai"')
+edit("build.gradle.kts", 'versionCode = 19; versionName = "0.4.12-dev"', 'versionCode = 20; versionName = "1.0.0-xiaoai"')
+edit("src/main/res/values/strings.xml", '<string name="app_name">车辆助手</string>', '<string name="app_name">比亚迪车控主程序</string>')
+
+repo_src = app / "src/main/java/dev/vehiclebridge/byd"
+shutil.copyfile(overlay / "VoiceCommandActivity.kt", repo_src / "VoiceCommandActivity.kt")
+
+# Voice actions bypass the upstream optional "lock + shutdown" preference.
+edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
+     "fun sendDoor(vin: String, action: DoorAction, temporaryPin: String? = null, progress: (String)->Unit = {}): SessionInfo {",
+     "fun sendDoor(vin: String, action: DoorAction, temporaryPin: String? = null, progress: (String)->Unit = {}, allowShutdownOnLock: Boolean = true): SessionInfo {")
+edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
+     "return sendCommands(saved,vehicle,pin,action,progress)",
+     "return sendCommands(saved,vehicle,pin,action,progress,allowShutdownOnLock)")
+edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
+     "private fun sendCommands(saved: SavedAccount,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit): SessionInfo {",
+     "private fun sendCommands(saved: SavedAccount,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit,allowShutdownOnLock: Boolean = true): SessionInfo {")
+edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
+     "val combined=action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock",
+     "val combined=allowShutdownOnLock && action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock")
+edit("src/main/java/dev/vehiclebridge/byd/AuthController.kt",
+     '    fun saveBinding(binding: BemfaBinding)',
+     '''    fun sendVoiceDoor(vin: String,action: DoorAction) = run("正在执行语音车控","请求已发送，请现场确认",complete={dev.vehiclebridge.byd.bridge.BridgeNotifications.result(appContext,it)}) {
+        repository.sendDoor(vin,action,null,::controlProgress,false)
+    }
+    fun saveBinding(binding: BemfaBinding)''')
+
+# Disable Bemfa UI and service. The voice version does not connect to Bemfa.
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.navBridge.setOnClickListener {selectTab(1)}",
+     "binding.navBridge.visibility=View.GONE")
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.bridgeStatusBadge.setOnClickListener {selectTab(1)}",
+     "binding.bridgeStatusBadge.visibility=View.GONE")
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.bemfaButton.setOnClickListener {selectTab(1)}",
+     "binding.bemfaButton.visibility=View.GONE")
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "if(resumed && !state.busy && info?.binding?.enabled==true) BemfaService.start(this)",
+     "// Bemfa background bridge deliberately disabled in XiaoAI edition.")
+# Hide combined control options and standalone shutdown in Xiaomi voice version.
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.shutdownButton.setOnClickListener {sendDoor(DoorAction.SHUTDOWN)}",
+     "binding.shutdownButton.visibility=View.GONE")
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.shutdownOnLock.isEnabled=!state.busy && vehicle!=null",
+     "binding.shutdownOnLock.isEnabled=false;binding.shutdownOnLock.visibility=View.GONE")
+edit("src/main/java/dev/vehiclebridge/byd/MainActivity.kt",
+     "binding.lockButton.text=if(binding.shutdownOnLock.isChecked) \"锁车并熄火\" else \"锁车\"",
+     "binding.lockButton.text=\"锁车\"")
+# Complete suppression of combined shutdown, including manual lock.
+edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
+     "val combined=allowShutdownOnLock && action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock",
+     "val combined=false // XiaoAI edition never sends a second shutdown command")
+
+p = app / "src/main/AndroidManifest.xml"
+xml = p.read_text(encoding="utf8")
+start = xml.index(' <uses-permission')
+# Keep only network permissions required for cloud vehicle API.
+xml = re.sub(r'\s*<uses-permission android:name="android.permission.(?!INTERNET|ACCESS_NETWORK_STATE)[^"]+" />', '', xml)
+xml = xml.replace('android:networkSecurityConfig="@xml/network_security_config"', '')
+xml = xml.replace('  <service android:name=".bridge.BemfaService" android:exported="false" android:foregroundServiceType="connectedDevice" />', '')
+xml = re.sub(r'\s*<receiver android:name="\.bridge\.BridgeBootReceiver".*?</receiver>', '', xml,flags=re.S)
+xml = xml.replace('<application ','''<permission android:name="dev.vehiclebridge.byd.xiaoai.permission.VOICE_ENTRY"
+             android:protectionLevel="signature" />
+ <application ''',1)
+xml = xml.replace(' </application>', '''  <activity android:name=".VoiceCommandActivity"
+      android:exported="true"
+      android:permission="dev.vehiclebridge.byd.xiaoai.permission.VOICE_ENTRY" />
+ </application>''',1)
+p.write_text(xml,encoding="utf8")
+print("XiaoAI V2 patch applied: signature voice gateway, biometric unlock, Bemfa disabled.")

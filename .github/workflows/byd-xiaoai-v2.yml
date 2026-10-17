@@ -1,0 +1,58 @@
+name: Build BYD XiaoAI V2 Real Vehicle APKs
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'BYD-XiaoAI-V2/**'
+      - '.github/workflows/byd-xiaoai-v2.yml'
+permissions:
+  contents: write
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout pinned original vehicle bridge (MIT)
+        uses: actions/checkout@v4
+        with:
+          repository: fm1223/byd-android
+          ref: 57434bede7e19342e512924a14439cca45738b96
+          path: BYD-XiaoAI-V2/upstream
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDKs and build tools
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | head -n1)
+          "$SDKMANAGER" 'platforms;android-35' 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Apply Xiaomi voice adapter patch
+        run: python3 BYD-XiaoAI-V2/patch_upstream.py BYD-XiaoAI-V2/upstream BYD-XiaoAI-V2/overlay
+      - name: Build BYD vehicle control core
+        run: gradle --no-daemon -p BYD-XiaoAI-V2/upstream :app:assembleDebug
+      - name: Build two voice launchers (same signing key)
+        run: gradle --no-daemon -p BYD-XiaoAI-V2/launcher :app:assembleLockDebug :app:assembleUnlockDebug
+      - name: Prepare installable APKs
+        run: |
+          mkdir -p dist
+          cp BYD-XiaoAI-V2/upstream/app/build/outputs/apk/debug/app-debug.apk dist/byd-voice-core-debug.apk
+          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/lock/debug/app-lock-debug.apk dist/byd-voice-lock-debug.apk
+          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/unlock/debug/app-unlock-debug.apk dist/byd-voice-unlock-debug.apk
+          sha256sum dist/*.apk | tee dist/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BYD-XiaoAI-V2-Real-Vehicle-APKs
+          path: dist/*
+          if-no-files-found: error
+      - name: Publish APK release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=byd-xiaoai-v2
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'BYD XiaoAI V2 - Real Vehicle Voice Control (Experimental)' --notes 'Warning: This build sends real BYD lock/unlock commands. Install all 3 APKs; configure login and PIN in the core. Voice unlock requires biometric/device credential. No Bemfa background bridge. Based on pinned fm1223/byd-android MIT source; unofficial reverse-engineered vehicle protocol.'
+          gh release upload "$TAG" dist/byd-voice-core-debug.apk dist/byd-voice-lock-debug.apk dist/byd-voice-unlock-debug.apk dist/SHA256SUMS.txt --clobber
