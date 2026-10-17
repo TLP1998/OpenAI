@@ -7,7 +7,13 @@
 - API 功能调研参考：[jkaberg/pyBYD](https://github.com/jkaberg/pyBYD)，作者 GitHub 用户 **jkaberg**。Python 客户端用作功能/参数研究，**不代表已在本 Android APP 中集成**；若移植源码，须遵守其 MIT 许可证。
 - 项目集成及测试：TLP1998/OpenAI 的“小笛车控助手”实验性版本。
 
-## 用户目标与 MQTT 合约（尚待巴法云实测）
+## 用户目标与 MQTT 合约（已获得温度实测帧，仍待实车验证）
+
+2026-10-17 用户实测巴法温度指令：`on#1#26#0#0#0`。将第 3 字段按十进制摄氏温度解释，当前严格接受 `on#1#<15..31>#0#0#0`。**运行时间固定 30 分钟**，由车辆助手 OPENAIR 参数 `timeSpan=5` 设置，不从 MQTT 消息读取。
+
+**最新开发源代码**：[动态协议/界面补丁](./patch_dynamic_upstream.py)、[MQTT 解析器](./source/XiaodiCommandParser.kt)、[30分钟空调参数生成器](./source/ClimateControlParams.kt)、[GitHub Actions 构建](../../../.github/workflows/byd-assistant-v4.yml)。旧 `patch_upstream.py` 为不再维护的固定26℃实验稿，**不要使用**。
+
+本地控制 UI 新增：温度－、温度＋、启动空调30分钟、关闭空调。所有按钮使用已登录比亚迪会话及原存储 PIN，不会在语音指令中传递凭据。
 米家已将昵称“**小迪**”的巴法云虚拟设备修改为空调类设备。原有主题不应凭截图重猜，App 必须使用用户在巴法云复制的准确 Topic。空调虚拟设备传送的实际 MQTT payload 需要在巴法控制台采集验证。
 
 | 小爱语音 | 目标动作 | 目前实现程度 |
