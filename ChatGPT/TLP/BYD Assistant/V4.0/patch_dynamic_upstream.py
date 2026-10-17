@@ -46,7 +46,10 @@ edit(base+"protocol/CnProtocol.kt",
 # Forward temperature through the existing BYD transport / receipt polling.
 edit(base+"data/BydApi.kt",
      'action: DoorAction,progress: (String)->Unit = {}): ControlReceipt {',
-     'action: DoorAction,progress: (String)->Unit = {},temperatureCelsius: Int? = null): ControlReceipt {', 2)
+     'action: DoorAction,progress: (String)->Unit = {},temperatureCelsius: Int? = null): ControlReceipt {')
+edit(base+"data/BydApi.kt",
+     'action: DoorAction,progress: (String)->Unit): ControlReceipt {',
+     'action: DoorAction,progress: (String)->Unit,temperatureCelsius: Int? = null): ControlReceipt {')
 edit(base+"data/BydApi.kt",
      'action: DoorAction,serial: String?): ControlReceipt {',
      'action: DoorAction,serial: String?,temperatureCelsius: Int? = null): ControlReceipt {')
@@ -167,6 +170,7 @@ edit(base+"MainActivity.kt",
 shutil.copyfile(overlay/"ClimateControlParams.kt", app/(base+"bridge/ClimateControlParams.kt"))
 shutil.copyfile(overlay/"XiaodiCommandParser.kt", app/(base+"bridge/XiaodiCommandParser.kt"))
 shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateCommandGate.kt"))
+(app/"src/test/java/dev/vehiclebridge/byd/bridge").mkdir(parents=True, exist_ok=True)
 shutil.copyfile(overlay/"XiaodiCommandParserTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/XiaodiCommandParserTest.kt")
 edit(base+"bridge/BemfaService.kt",
      'private var gate: CommandGate?=null',
