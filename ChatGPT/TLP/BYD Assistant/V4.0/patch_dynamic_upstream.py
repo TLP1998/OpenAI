@@ -141,9 +141,19 @@ extra = '''<LinearLayout android:layout_width="match_parent" android:layout_heig
                     </LinearLayout>
                         '''
 edit(layout,anchor,extra+anchor)
+edit(layout, '<Button android:id="@+id/licenseButton"',
+     '<Button android:id="@+id/changelogButton" style="@style/ActionButton" android:text="软件更新记录" android:layout_marginTop="12dp" />\n                        <Button android:id="@+id/licenseButton"')
 xml = (app/layout).read_text(encoding="utf-8")
 ET.fromstring(xml)
 
+edit(base+"MainActivity.kt",
+     '        binding.aboutVersion.text="版本 "',
+     '''        binding.changelogButton.setOnClickListener {
+            val details=assets.open("APP_CHANGELOG.txt").bufferedReader().use {it.readText()}
+            AlertDialog.Builder(this).setTitle("软件更新记录").setMessage(details)
+                .setPositiveButton("关闭",null).show()
+        }
+        binding.aboutVersion.text="版本 "''')
 edit(base+"MainActivity.kt",
      '    private var manualRequest=false',
      '    private var manualRequest=false\n    private var climateSetpoint=26\n    private var climateDurationMinutes=30')
@@ -189,6 +199,8 @@ edit(base+"MainActivity.kt",
         binding.shutdownOnLock.setOnCheckedChangeListener(null)''')
 
 # MQTT gate handles 6-field commands and dispatches actual numeric setpoints.
+(app/"src/main/assets").mkdir(parents=True,exist_ok=True)
+shutil.copyfile(overlay/"APP_CHANGELOG.txt",app/"src/main/assets/APP_CHANGELOG.txt")
 shutil.copyfile(overlay/"ClimateControlParams.kt", app/(base+"bridge/ClimateControlParams.kt"))
 shutil.copyfile(overlay/"XiaodiCommandParser.kt", app/(base+"bridge/XiaodiCommandParser.kt"))
 shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateCommandGate.kt"))
