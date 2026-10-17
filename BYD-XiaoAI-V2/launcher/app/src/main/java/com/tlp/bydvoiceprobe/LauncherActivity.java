@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Build;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 /** Voice launcher contains no credentials, PIN, network code, or vehicle SDK. */
@@ -12,6 +14,14 @@ public final class LauncherActivity extends Activity {
     private boolean launched = false;
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        // Allow a launched voice entry to display while the screen is locked when HyperOS permits.
+        if (Build.VERSION.SDK_INT >= 27) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
         TextView t = new TextView(this);
         t.setTextSize(19);
         t.setTextColor(Color.DKGRAY);
@@ -26,7 +36,7 @@ public final class LauncherActivity extends Activity {
             launched = true;
             finish();
         } catch (ActivityNotFoundException | SecurityException e) {
-            t.setText("无法启动车控主程序。\n\n请先安装同一批次构建的车控主程序 APK，再打开一次。\n\n如果更新了主程序，需要同时安装本批次两个语音入口 APK。");
+            t.setText("无法启动车控主程序。\n\n请先安装同一批次构建的车控主程序 APK，再打开一次。\n\n如果更新了主程序，需要同时安装本批次三个语音入口 APK。");
         }
     }
 }

@@ -1,4 +1,4 @@
-name: Build BYD XiaoAI V2 Real Vehicle APKs
+name: Build XiaoPoChe V2.2 Lock Unlock and CloseAir
 on:
   workflow_dispatch:
   push:
@@ -35,15 +35,25 @@ jobs:
         run: python3 BYD-XiaoAI-V2/patch_upstream.py BYD-XiaoAI-V2/upstream BYD-XiaoAI-V2/overlay
       - name: Build BYD vehicle control core
         run: gradle --no-daemon -p BYD-XiaoAI-V2/upstream :app:assembleDebug
-      - name: Build two voice launchers (same signing key)
-        run: gradle --no-daemon -p BYD-XiaoAI-V2/launcher :app:assembleLockDebug :app:assembleUnlockDebug
+      - name: Build three voice launchers (same signing key)
+        run: gradle --no-daemon -p BYD-XiaoAI-V2/launcher :app:assembleLockDebug :app:assembleUnlockDebug :app:assembleLockshutdownDebug
       - name: Prepare installable APKs
         run: |
           mkdir -p dist
           cp BYD-XiaoAI-V2/upstream/app/build/outputs/apk/debug/app-debug.apk dist/byd-voice-core-debug.apk
-          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/lock/debug/app-lock-debug.apk dist/byd-voice-lock-debug.apk
-          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/unlock/debug/app-unlock-debug.apk dist/byd-voice-unlock-debug.apk
+          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/lock/debug/app-lock-debug.apk dist/xiaopoche-lock.apk
+          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/unlock/debug/app-unlock-debug.apk dist/xiaopoche-unlock.apk
+          cp BYD-XiaoAI-V2/launcher/app/build/outputs/apk/lockshutdown/debug/app-lockshutdown-debug.apk dist/xiaopoche-lock-closeair.apk
           sha256sum dist/*.apk | tee dist/SHA256SUMS.txt
+      - name: Validate APK signing certificates match
+        run: |
+          VERIFY="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          cert() { "$VERIFY" verify --print-certs "$1" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p'; }
+          A=$(cert dist/byd-voice-core-debug.apk)
+          test -n "$A"
+          test "$A" = "$(cert dist/xiaopoche-lock.apk)"
+          test "$A" = "$(cert dist/xiaopoche-unlock.apk)"
+          test "$A" = "$(cert dist/xiaopoche-lock-closeair.apk)"
       - uses: actions/upload-artifact@v4
         with:
           name: BYD-XiaoAI-V2-Real-Vehicle-APKs
@@ -53,6 +63,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG=byd-xiaoai-v2
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'BYD XiaoAI V2 - Real Vehicle Voice Control (Experimental)' --notes 'Warning: This build sends real BYD lock/unlock commands. Install all 3 APKs; configure login and PIN in the core. Voice unlock requires biometric/device credential. No Bemfa background bridge. Based on pinned fm1223/byd-android MIT source; unofficial reverse-engineered vehicle protocol.'
-          gh release upload "$TAG" dist/byd-voice-core-debug.apk dist/byd-voice-lock-debug.apk dist/byd-voice-unlock-debug.apk dist/SHA256SUMS.txt --clobber
+          TAG=byd-xiaoai-v2-2
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'XiaoPoChe V2.2 - Lock, Unlock, Lock + CloseAir (Experimental)' --notes 'Warning: This build sends real BYD lock/unlock commands. Install all 4 APKs; configure login and PIN in the core. No 45 second cooldown. Voice operations may be launched from the lockscreen subject to Xiaomi restrictions; voice unlock is accessible without per-command confirmation and this poses a significant security risk. No Bemfa background bridge. Based on pinned fm1223/byd-android MIT source; unofficial reverse-engineered vehicle protocol.'
+          gh release upload "$TAG" dist/byd-voice-core-debug.apk dist/xiaopoche-lock.apk dist/xiaopoche-unlock.apk dist/xiaopoche-lock-closeair.apk dist/SHA256SUMS.txt --clobber
