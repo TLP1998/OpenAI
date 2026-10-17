@@ -1,0 +1,55 @@
+name: BYD Assistant V4 - Dynamic Bemfa AC Prototype
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ChatGPT/TLP/BYD Assistant/V4.0/**'
+      - '.github/workflows/byd-assistant-v4.yml'
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout pinned original BYD project
+        uses: actions/checkout@v4
+        with:
+          repository: fm1223/byd-android
+          ref: 57434bede7e19342e512924a14439cca45738b96
+          path: upstream-byd
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK 36
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | head -n1)
+          "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Patch original BYD source
+        run: |
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_dynamic_upstream.py' \
+            upstream-byd 'ChatGPT/TLP/BYD Assistant/V4.0/source'
+      - name: Run unit tests (including observed aircon format)
+        run: gradle --no-daemon -p upstream-byd :app:testDebugUnitTest
+      - name: Assemble development APK
+        run: gradle --no-daemon -p upstream-byd :app:assembleDebug
+      - name: Verify APK signature and identity
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp upstream-byd/app/build/outputs/apk/debug/app-debug.apk dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk | grep "package: name='dev.vehiclebridge.byd'"
+          sha256sum dist/*.apk > dist/SHA256SUMS.txt
+      - name: Upload experimental artifact (not compatible with original signature)
+        uses: actions/upload-artifact@v4
+        with:
+          name: BYD-V4-DEV-DO-NOT-INSTALL-AS-UPDATE
+          path: dist/*
+          if-no-files-found: error
