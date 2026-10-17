@@ -39,7 +39,7 @@ edit(base + "data/BydApi.kt",
 edit(base + "protocol/CnProtocol.kt",
      '"commandPwd" to CnCrypto.md5Upper(pin),"commandType" to action.command,"controlParamsMap" to "{}",',
      '"commandPwd" to CnCrypto.md5Upper(pin),"commandType" to action.command,"controlParamsMap" to '
-     '(if(action==DoorAction.CLIMATE_26_30) ClimateControlParams.fixed26C30Minutes() else "{}"),')
+     '(if(action==DoorAction.CLIMATE_26_30) dev.vehiclebridge.byd.bridge.ClimateControlParams.fixed26C30Minutes() else "{}"),')
 
 edit(base + "data/SessionRepository.kt",
      'val combined=action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock',
