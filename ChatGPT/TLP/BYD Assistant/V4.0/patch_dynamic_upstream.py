@@ -49,7 +49,7 @@ edit(base+"data/BydApi.kt",
      'action: DoorAction,progress: (String)->Unit = {},temperatureCelsius: Int? = null): ControlReceipt {')
 edit(base+"data/BydApi.kt",
      'action: DoorAction,progress: (String)->Unit): ControlReceipt {',
-     'action: DoorAction,progress: (String)->Unit,temperatureCelsius: Int? = null): ControlReceipt {')
+     'action: DoorAction,progress: (String)->Unit,temperatureCelsius: Int?): ControlReceipt {')
 edit(base+"data/BydApi.kt",
      'action: DoorAction,serial: String?): ControlReceipt {',
      'action: DoorAction,serial: String?,temperatureCelsius: Int? = null): ControlReceipt {')
