@@ -32,7 +32,7 @@ internal object XiaodiCommandParser {
         if (parts.size !in 3..4 || parts[0] != "on") return null
         if (parts[1] !in listOf("1", "2", "3", "4")) return null
         val temperature = parts[2].toIntOrNull() ?: return null
-        if (temperature !in 16..30) return null
+        if (temperature != 26) return null
         if (parts.size == 4 && !Regex("[0-9]").matches(parts[3])) return null
         return XiaodiCommand.AirConditionerSettings(temperature)
     }
