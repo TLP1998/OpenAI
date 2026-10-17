@@ -5,3 +5,5 @@
 约定：
 - TLP 项目相关的网站、日报索引、HTML、JSON、图片引用与辅助文件均放在 `ChatGPT/TLP/` 下。
 - 不修改该目录之外的仓库内容，除非用户明确要求。
+
+- [BYD Assistant｜小破车语音车控](./BYD%20Assistant/)：V1、V2 和 V3 统一按版本归档；历史 APK 在 GitHub Releases。
