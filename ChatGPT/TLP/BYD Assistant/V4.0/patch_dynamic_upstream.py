@@ -194,6 +194,7 @@ shutil.copyfile(overlay/"XiaodiCommandParser.kt", app/(base+"bridge/XiaodiComman
 shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateCommandGate.kt"))
 (app/"src/test/java/dev/vehiclebridge/byd/bridge").mkdir(parents=True, exist_ok=True)
 shutil.copyfile(overlay/"XiaodiCommandParserTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/XiaodiCommandParserTest.kt")
+shutil.copyfile(overlay/"ClimateControlParamsTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/ClimateControlParamsTest.kt")
 edit(base+"bridge/BemfaService.kt",
      'private var gate: CommandGate?=null',
      'private var gate: ClimateCommandGate?=null')
