@@ -1,0 +1,76 @@
+name: BYD Assistant V3.1 - One Icon and Editable Voice Phrases
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ChatGPT/TLP/BYD Assistant/V3.1/**'
+      - '.github/workflows/byd-assistant-v3-1.yml'
+permissions:
+  contents: write
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout pinned BYD protocol source
+        uses: actions/checkout@v4
+        with:
+          repository: fm1223/byd-android
+          ref: 57434bede7e19342e512924a14439cca45738b96
+          path: 'ChatGPT/TLP/BYD Assistant/V3.1/upstream'
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK 36
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | head -n1)
+          "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Apply V3.1 code changes
+        run: |
+          python3 'ChatGPT/TLP/BYD Assistant/V3.1/patch_upstream.py' \
+            'ChatGPT/TLP/BYD Assistant/V3.1/upstream' \
+            'ChatGPT/TLP/BYD Assistant/V3.1/overlay'
+      - name: Unit-test exact phrase handling
+        run: |
+          gradle --no-daemon -p 'ChatGPT/TLP/BYD Assistant/V3.1/upstream' \
+            :app:testDebugUnitTest --tests dev.vehiclebridge.byd.VoicePhraseMatcherTest
+      - name: Assemble V3.1
+        run: |
+          gradle --no-daemon -p 'ChatGPT/TLP/BYD Assistant/V3.1/upstream' :app:assembleDebug
+      - name: Validate one APK and exactly one desktop launcher
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp 'ChatGPT/TLP/BYD Assistant/V3.1/upstream/app/build/outputs/apk/debug/app-debug.apk' dist/xiaodi-voice-v3.1.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs dist/xiaodi-voice-v3.1.apk
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump xmltree dist/xiaodi-voice-v3.1.apk AndroidManifest.xml > "$RUNNER_TEMP/manifest.txt"
+          grep -q 'VoiceHomeActivity' "$RUNNER_TEMP/manifest.txt"
+          grep -q 'MainActivity' "$RUNNER_TEMP/manifest.txt"
+          launcher_count=$(grep -c 'android.intent.category.LAUNCHER' "$RUNNER_TEMP/manifest.txt")
+          echo "Desktop launcher count: $launcher_count"
+          test "$launcher_count" -eq 1
+          ! grep -q 'VoiceLockActivity' "$RUNNER_TEMP/manifest.txt"
+          ! grep -q 'VoiceUnlockActivity' "$RUNNER_TEMP/manifest.txt"
+          sha256sum dist/xiaodi-voice-v3.1.apk > dist/SHA256SUMS.txt
+      - name: Upload test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BYD-Assistant-V3.1-Single-Icon
+          path: dist/*
+          if-no-files-found: error
+      - name: Publish V3.1 preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=byd-xiaoai-v3-1
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" \
+            --title 'XiaoDi V3.1 - One APK, One Icon, Editable In-App Speech' \
+            --notes 'Single APK/launcher preview. Editable lock/unlock/lock+CLOSEAIR voice phrases are recognized INSIDE THE APP using Android speech service. Changing phrases DOES NOT configure XiaoAI shortcuts: first ask XiaoAI to open the app, then speak the saved command (two utterances). Optional auto-start speech may depend on HyperOS. No Bemfa. Caution: no per-command unlock verification; lockscreen availability and voice ASR unverified. CLOSEAIR means closing air conditioning, not confirmed engine-off. V2.2 remains a tested fallback.' \
+            --prerelease
+          gh release upload "$TAG" dist/xiaodi-voice-v3.1.apk dist/SHA256SUMS.txt --clobber
