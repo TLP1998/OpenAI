@@ -27,8 +27,8 @@ edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
      "fun sendDoor(vin: String, action: DoorAction, temporaryPin: String? = null, progress: (String)->Unit = {}): SessionInfo {",
      "fun sendDoor(vin: String, action: DoorAction, temporaryPin: String? = null, progress: (String)->Unit = {}, allowShutdownOnLock: Boolean = true): SessionInfo {")
 edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
-     "return sendCommands(saved,vehicle,pin,action,progress)",
-     "return sendCommands(saved,vehicle,pin,action,progress,allowShutdownOnLock)")
+     "return sendCommands(saved,vehicle,pin,action,progress)\n    }\n    @Synchronized fun setShutdownOnLock",
+     "return sendCommands(saved,vehicle,pin,action,progress,allowShutdownOnLock)\n    }\n    @Synchronized fun setShutdownOnLock")
 edit("src/main/java/dev/vehiclebridge/byd/data/SessionRepository.kt",
      "private fun sendCommands(saved: SavedAccount,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit): SessionInfo {",
      "private fun sendCommands(saved: SavedAccount,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit,allowShutdownOnLock: Boolean = true): SessionInfo {")
