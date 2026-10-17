@@ -74,6 +74,11 @@ edit(base+"data/SessionRepository.kt",
 edit(base+"data/SessionRepository.kt",
      'if(combined && first.outcome!=RemoteOutcome.FAILURE)',
      'if(combined && first.outcome==RemoteOutcome.SUCCESS)')
+# Kotlin trailing-lambda syntax would otherwise bind to the new trailing
+# durationMinutes integer argument instead of the progress callback.
+edit(base+"data/SessionRepository.kt",
+     'api.executeControl(saved.config,saved.session,vehicle,pin,DoorAction.SHUTDOWN) {progress(first.describe(action)+"\\n"+it)}',
+     'api.executeControl(saved.config,saved.session,vehicle,pin,DoorAction.SHUTDOWN,{progress(first.describe(action)+"\\n"+it)})')
 edit(base+"data/SessionRepository.kt",
      'fun sendBoundDoor(bindingId: String, action: DoorAction, progress: (String)->Unit = {}): SessionInfo {',
      'fun sendBoundDoor(bindingId: String, action: DoorAction, progress: (String)->Unit = {},temperatureCelsius: Int? = null,durationMinutes: Int = 30): SessionInfo {')
