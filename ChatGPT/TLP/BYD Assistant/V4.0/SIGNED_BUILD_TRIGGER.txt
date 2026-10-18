@@ -1,0 +1,7 @@
+XiaoDi V4.0.0 stable-signature verification trigger
+Requested by repository owner on 2026-10-18 after confirming:
+- Encrypted signing archive is present in OpenAI-Private/ChatGPT/TLP/BYD Assistant/Signing.
+- Owner configured two signing Secrets in public OpenAI repository.
+This file intentionally contains no secret values.
+Expected build: independent package com.tlp1998.xiaodi, versionCode 400, release APK signed by fixed private key.
+Do not publish/update release or modify vehicle state as part of CI.
