@@ -44,18 +44,32 @@ edit(base+"protocol/CnProtocol.kt",
      '"commandPwd" to CnCrypto.md5Upper(pin),"commandType" to action.command,"controlParamsMap" to "{}",',
      '"commandPwd" to CnCrypto.md5Upper(pin),"commandType" to action.command,"controlParamsMap" to (if(action==DoorAction.CLIMATE) dev.vehiclebridge.byd.bridge.ClimateControlParams.forTemperature(requireNotNull(temperatureCelsius),durationMinutes) else "{}"),')
 # Forward temperature through the existing BYD transport / receipt polling.
-edit(base+"data/BydApi.kt",
-     'action: DoorAction,progress: (String)->Unit = {}): ControlReceipt {',
-     'action: DoorAction,progress: (String)->Unit = {},temperatureCelsius: Int? = null,durationMinutes: Int = 30): ControlReceipt {')
-edit(base+"data/BydApi.kt",
-     'action: DoorAction,progress: (String)->Unit): ControlReceipt {',
-     'action: DoorAction,progress: (String)->Unit,temperatureCelsius: Int?,durationMinutes: Int): ControlReceipt {')
+# Do not change AccountApi.executeControl's existing signature: original tests
+# and implementation mocks rely on its callback being the final parameter.
 edit(base+"data/BydApi.kt",
      'action: DoorAction,serial: String?): ControlReceipt {',
      'action: DoorAction,serial: String?,temperatureCelsius: Int? = null,durationMinutes: Int = 30): ControlReceipt {')
 edit(base+"data/BydApi.kt",
      'protocol.doorRequest(session,vehicle,pin,action,serial)',
      'protocol.doorRequest(session,vehicle,pin,action,serial,temperatureCelsius,durationMinutes)')
+# A separate method preserves the old ABI while allowing the climate-only
+# parameters to reach the existing Chinese-region remoteControl endpoint.
+edit(base+"data/BydApi.kt",
+     '    fun sendDoor(config: AccountConfig, session: Session, vehicle: Vehicle, pin: String, action: DoorAction): Unit = throw ApiFailure(null,"车辆操作不可用")',
+     '''    fun executeClimateControl(config: AccountConfig,session: Session,vehicle: Vehicle,pin: String,
+        temperatureCelsius: Int,durationMinutes: Int,progress: (String)->Unit): ControlReceipt =
+        throw ApiFailure(null,"远程空调接口未实现")
+    fun sendDoor(config: AccountConfig, session: Session, vehicle: Vehicle, pin: String, action: DoorAction): Unit = throw ApiFailure(null,"车辆操作不可用")''')
+edit(base+"data/BydApi.kt",
+     '    override fun executeControl(config: AccountConfig,session: Session,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit): ControlReceipt {',
+     '''    override fun executeControl(config: AccountConfig,session: Session,vehicle: Vehicle,pin: String,
+        action: DoorAction,progress: (String)->Unit): ControlReceipt =
+        executeControlWithSettings(config,session,vehicle,pin,action,progress,null,30)
+    override fun executeClimateControl(config: AccountConfig,session: Session,vehicle: Vehicle,pin: String,
+        temperatureCelsius: Int,durationMinutes: Int,progress: (String)->Unit): ControlReceipt =
+        executeControlWithSettings(config,session,vehicle,pin,DoorAction.CLIMATE,progress,temperatureCelsius,durationMinutes)
+    private fun executeControlWithSettings(config: AccountConfig,session: Session,vehicle: Vehicle,pin: String,
+        action: DoorAction,progress: (String)->Unit,temperatureCelsius: Int?,durationMinutes: Int): ControlReceipt {''')
 edit(base+"data/BydApi.kt",
      'val first=dispatch(config,session,vehicle,pin,action,sentSerial)',
      'val first=dispatch(config,session,vehicle,pin,action,sentSerial,temperatureCelsius,durationMinutes)')
@@ -67,7 +81,9 @@ edit(base+"data/SessionRepository.kt",
      'private fun sendCommands(saved: SavedAccount,vehicle: Vehicle,pin: String,action: DoorAction,progress: (String)->Unit,forceCloseAir: Boolean = false,temperatureCelsius: Int? = null,durationMinutes: Int = 30): SessionInfo {')
 edit(base+"data/SessionRepository.kt",
      'val first=api.executeControl(saved.config,saved.session,vehicle,pin,action,progress)',
-     'val first=api.executeControl(saved.config,saved.session,vehicle,pin,action,progress,temperatureCelsius,durationMinutes)')
+     '''val first=if(action==DoorAction.CLIMATE)
+            api.executeClimateControl(saved.config,saved.session,vehicle,pin,requireNotNull(temperatureCelsius),durationMinutes,progress)
+        else api.executeControl(saved.config,saved.session,vehicle,pin,action,progress)''')
 edit(base+"data/SessionRepository.kt",
      'val combined=action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock',
      'val combined=action==DoorAction.LOCK && (forceCloseAir || vehicle.vin in saved.shutdownOnLock)')
