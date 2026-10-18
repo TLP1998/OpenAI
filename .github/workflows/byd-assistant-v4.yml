@@ -44,6 +44,9 @@ jobs:
         run: |
           python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_bluetooth_upstream.py' \
             upstream-byd 'ChatGPT/TLP/BYD Assistant/V4.0/source'
+      - name: Align original shutdown tests with confirmed-lock safety
+        run: |
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_ci_tests.py' upstream-byd
       - name: Run unit tests (including observed aircon format)
         run: gradle --no-daemon -p upstream-byd :app:testDebugUnitTest
       - name: Assemble development APK
