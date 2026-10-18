@@ -19,7 +19,7 @@
 ## 运行首次固定签名构建
 到 [XiaoDi V4 - Fixed-Signature Install and Updates](https://github.com/TLP1998/OpenAI/actions/workflows/xiaodi-v4-signed.yml) 选择 `Run workflow` → `main` → `Run workflow`。
 
-该工作流 **仅支持手动触发**，不会每次修改文档就重复构建。
+该工作流支持手动触发，也支持**仅当明确创建/修改 SIGNED_BUILD_TRIGGER.txt 时**自动触发一次；日常代码或文档提交不再重复构建。用户可完成两个仓库 Secrets 后告知助手，再由助手提交触发文件，无需用户自行点 Run workflow。
 产物是 `XiaoDi-V4.0.0-Fixed-Signature`，其中预期含 `xiaodi-v4.0.0-signed.apk` 和 SHA256/证书指纹检查报告。下载后请先做静态核验，尚未实车测试，不应直接视为生产稳定版本。
 
 ## 实车测试安全
