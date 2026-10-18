@@ -46,4 +46,11 @@ if s.count(old)!=1:
     raise RuntimeError("Unexpected upstream release signing configuration")
 s=s.replace(old,new)
 p.write_text(s,encoding="utf-8")
+
+strings=root/"app/src/main/res/values/strings.xml"
+values=strings.read_text(encoding="utf-8")
+old_label='<string name="app_name">车辆助手</string>'
+if values.count(old_label)!=1:
+    raise RuntimeError("Expected upstream app label")
+strings.write_text(values.replace(old_label,'<string name="app_name">小迪车控助手</string>'),encoding="utf-8")
 print("Prepared independent com.tlp1998.xiaodi 4.0.0 (400) with stable release signing.")
