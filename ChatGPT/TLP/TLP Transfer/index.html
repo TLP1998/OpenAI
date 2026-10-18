@@ -100,6 +100,11 @@ main{padding-top:22px}
 <script>
 const repo="TLP1998/OpenAI";
 const messages=[{
+ id:"TLP-20261018-002",title:"DevSpace PowerShell 脚本运行失败排查",date:"2026-10-18",category:"故障排查",
+ summary:"右键运行后窗口消失？通过 PowerShell 保留错误输出，检查 Node、npm、Git 与 DevSpace。",
+ body:["右键使用 PowerShell 运行后窗口消失，不能据此判断安装成功。","打开 Windows PowerShell，执行诊断命令并保留窗口，检查脚本路径和退出代码。","继续检查 node、npm、git 及 DevSpace；将第一条红色错误和最后一屏截图发回 TLP 项目聊天。","不要反复右键运行，不要公开 Owner 密码或令牌。"],
+ page:"messages/2026-10-18-002.html",files:[],issueNumber:6
+},{
  id:"TLP-20261018-001",title:"DevSpace Windows 11 部署指南与 Bootstrap 安装脚本",date:"2026-10-18",category:"部署指南",
  summary:"Windows 11 DevSpace 安装、MCP 连接与 V1-V3 验收；附 PowerShell 安装脚本。",
  body:["在 Windows 11 上运行 Bootstrap，按提示确认软件安装；安装完成后初始化 DevSpace。","安全提醒：不要分享 Owner 密码，不要开放整个 C 盘。","首次安装成功后配置 HTTPS 隧道，再在 ChatGPT 添加自定义 MCP 服务器。","V1：安装成功；V2：读取本地测试文件；V3：远程执行测试命令并读取结果。","先完成 V1，将 PowerShell 最后一屏截图发回 TLP 项目聊天。"],
