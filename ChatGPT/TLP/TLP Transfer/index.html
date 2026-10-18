@@ -100,6 +100,11 @@ main{padding-top:22px}
 <script>
 const repo="TLP1998/OpenAI";
 const messages=[{
+ id:"TLP-20261018-004",title:"Node.js v22.19.0｜Windows 10 安装包与验证",date:"2026-10-18",category:"部署指南",
+ summary:"Node.js 22.19.0 Windows x64 官方 MSI 下载地址、安装后检查命令及 DevSpace V1 后续步骤。",
+ body:["针对 Windows 10 专业版 22H2，建议先尝试 Node.js v22.19.0 Windows x64 MSI。","官方安装包：https://nodejs.org/dist/v22.19.0/node-v22.19.0-x64.msi","安装后关闭并重新打开 PowerShell，执行 node --version、npm.cmd --version、git --version。","安装包由 Node.js 官网提供，网页使用官方外部下载链接，不复制 MSI 二进制到 GitHub。"],
+ page:"messages/2026-10-18-004.html",files:[],issueNumber:8
+},{
  id:"TLP-20261018-003",title:"DevSpace Windows 10/11 兼容安装 V2",date:"2026-10-18",category:"部署指南",
  summary:"修复旧脚本只支持 Win11 的限制；提供 Win10/11 兼容安装脚本和运行命令。",
  body:["已确认当前电脑为 Windows 10 专业版 22H2，旧版脚本因系统限制退出。","V2 支持 Windows 10/11，检查 Git、Git Bash、Node/npm，并按提示选择初始化 DevSpace。","不要公开 Owner 密码或开放整个 C 盘。先完成 V1，再继续 MCP 远程连接验收。"],
