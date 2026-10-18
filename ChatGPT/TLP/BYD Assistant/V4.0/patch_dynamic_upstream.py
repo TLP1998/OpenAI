@@ -31,10 +31,10 @@ edit(base+"protocol/Vehicle.kt",
      'SHUTDOWN("CLOSEAIR"), CLIMATE("OPENAIR") }')
 edit(base+"protocol/ControlReceipt.kt",
      'DoorAction.SHUTDOWN -> "熄火"',
-     'DoorAction.SHUTDOWN -> "关闭空调";DoorAction.CLIMATE -> "设置车内空调"')
+     'DoorAction.SHUTDOWN -> "熄火";DoorAction.CLIMATE -> "设置车内空调"')
 edit(base+"data/BydApi.kt",
      'DoorAction.SHUTDOWN -> "熄火"',
-     'DoorAction.SHUTDOWN -> "关闭空调";DoorAction.CLIMATE -> "设置车内空调"')
+     'DoorAction.SHUTDOWN -> "熄火";DoorAction.CLIMATE -> "设置车内空调"')
 
 # Extend BYD wire request with temperature; only OPENAIR uses nonempty parameters.
 edit(base+"protocol/CnProtocol.kt",
@@ -87,9 +87,7 @@ edit(base+"data/SessionRepository.kt",
 edit(base+"data/SessionRepository.kt",
      'val combined=action==DoorAction.LOCK && vehicle.vin in saved.shutdownOnLock',
      'val combined=action==DoorAction.LOCK && (forceCloseAir || vehicle.vin in saved.shutdownOnLock)')
-edit(base+"data/SessionRepository.kt",
-     'if(combined && first.outcome!=RemoteOutcome.FAILURE)',
-     'if(combined && first.outcome==RemoteOutcome.SUCCESS)')
+# Preserve upstream ordering: CLOSEAIR after LOCKDOOR accepted/success, never after FAILURE.
 # Kotlin trailing-lambda syntax would otherwise bind to the new trailing
 # durationMinutes integer argument instead of the progress callback.
 edit(base+"data/SessionRepository.kt",
