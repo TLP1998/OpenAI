@@ -197,6 +197,15 @@ edit(base+"MainActivity.kt",
     }
     private fun sendDoor(action: DoorAction) {''')
 edit(base+"MainActivity.kt",
+     '        binding.telemetryCard.visibility=View.GONE',
+     '        binding.telemetryCard.visibility=View.VISIBLE')
+edit(base+"MainActivity.kt",
+     'binding.telemetryValues.text=report?.rows?.takeIf {it.isNotEmpty()}?.joinToString("\\n") {it.first+"     "+it.second} ?: "总里程、胎压、能耗：未提供"',
+     'binding.telemetryValues.text=dev.vehiclebridge.byd.bridge.VehicleStatusPresenter.show(report)')
+edit(base+"MainActivity.kt",
+     'binding.refreshTelemetry.isEnabled=false',
+     'binding.refreshTelemetry.isEnabled=!state.busy && vehicle!=null && ("车辆数据" !in (info?.unsupportedTelemetry ?: emptySet()))')
+edit(base+"MainActivity.kt",
      '        binding.shutdownOnLock.setOnCheckedChangeListener(null)',
      '''        listOf(binding.climateMinus,binding.climatePlus,binding.climateDuration,binding.climateApply,binding.climateStop)
             .forEach {it.isEnabled=!state.busy && vehicle!=null}
@@ -206,6 +215,7 @@ edit(base+"MainActivity.kt",
 (app/"src/main/assets").mkdir(parents=True,exist_ok=True)
 shutil.copyfile(overlay/"APP_CHANGELOG.txt",app/"src/main/assets/APP_CHANGELOG.txt")
 shutil.copyfile(overlay/"ClimateControlParams.kt", app/(base+"bridge/ClimateControlParams.kt"))
+shutil.copyfile(overlay/"VehicleStatusPresenter.kt", app/(base+"bridge/VehicleStatusPresenter.kt"))
 shutil.copyfile(overlay/"XiaodiCommandParser.kt", app/(base+"bridge/XiaodiCommandParser.kt"))
 shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateCommandGate.kt"))
 (app/"src/test/java/dev/vehiclebridge/byd/bridge").mkdir(parents=True, exist_ok=True)
