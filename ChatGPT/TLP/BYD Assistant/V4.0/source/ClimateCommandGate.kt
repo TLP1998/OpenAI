@@ -27,7 +27,7 @@ internal class ClimateCommandGate(
         } catch (_: Exception) { return null }
         val parsed = XiaodiCommandParser.parse(value) ?: return null
         val command = when (parsed) {
-            XiaodiCommand.PowerOnRequested -> AcceptedClimateCommand(DoorAction.UNLOCK)
+            XiaodiCommand.PowerOnRequested -> AcceptedClimateCommand(DoorAction.CLIMATE, null)
             XiaodiCommand.PowerOffRequested -> AcceptedClimateCommand(DoorAction.LOCK)
             is XiaodiCommand.AirConditionerSettings ->
                 AcceptedClimateCommand(DoorAction.CLIMATE, parsed.temperatureCelsius)
