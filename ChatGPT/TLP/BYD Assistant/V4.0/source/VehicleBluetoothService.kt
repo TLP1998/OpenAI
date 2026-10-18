@@ -59,6 +59,13 @@ class VehicleBluetoothService: Service() {
     private var lastAddress: String?=null
     private var connected=false
     private lateinit var controller: AuthController
+    private var awaitingLockReceipt=false
+    private val controlObserver: (dev.vehiclebridge.byd.AuthState)->Unit={state ->
+        if(awaitingLockReceipt && !state.busy) {
+            awaitingLockReceipt=false
+            if(state.message.contains("锁车：服务器报告执行成功")) cancelReminder()
+        }
+    }
 
     private val receiver=object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -100,14 +107,18 @@ class VehicleBluetoothService: Service() {
         if (Build.VERSION.SDK_INT>=29) startForeground(ID,note,ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
         else startForeground(ID,note)
         controller=AuthController.get(this)
+        controller.initialize()
+        controller.observe(controlObserver)
         if (Build.VERSION.SDK_INT>=31 &&
             checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED) {
             stopSelf();return
         }
-        registerReceiver(receiver,IntentFilter().apply {
+        val filter=IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
             addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-        })
+        }
+        if(Build.VERSION.SDK_INT>=33) registerReceiver(receiver,filter,Context.RECEIVER_EXPORTED)
+        else registerReceiver(receiver,filter)
         registered=true
     }
 
@@ -143,8 +154,8 @@ class VehicleBluetoothService: Service() {
                 scheduleReminder(address)
             }
             BluetoothAction.LOCK -> {
+                awaitingLockReceipt=true
                 controller.sendDoor(info.selected!!.vin,DoorAction.LOCK)
-                cancelReminder()
             }
         }
     }
@@ -189,6 +200,7 @@ class VehicleBluetoothService: Service() {
         cancelReminder()
         disconnectPending?.let {handler.removeCallbacks(it)}
         if(registered) try {unregisterReceiver(receiver)}catch (_: Exception) {}
+        if(::controller.isInitialized) controller.remove(controlObserver)
         super.onDestroy()
     }
 }
