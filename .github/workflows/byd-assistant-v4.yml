@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'ChatGPT/TLP/BYD Assistant/V4.0/**'
+      - 'ChatGPT/TLP/BYD Assistant/V4.0/source/**'
+      - 'ChatGPT/TLP/BYD Assistant/V4.0/patch_dynamic_upstream.py'
+      - 'ChatGPT/TLP/BYD Assistant/V4.0/patch_bluetooth_upstream.py'
       - '.github/workflows/byd-assistant-v4.yml'
 permissions:
   contents: read
