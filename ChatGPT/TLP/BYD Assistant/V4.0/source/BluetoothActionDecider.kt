@@ -14,6 +14,7 @@ internal data class BluetoothOptions(
     val enabledLockOnDisconnect: Boolean = false,
     val enabledPossibleUnlockedReminder: Boolean = false,
     val selectedDeviceAddress: String = "",
+    val configuredDeviceName: String = "秦Plus",
     val reminderMinutes: Int = 5
 )
 internal class BluetoothActionDecider(
@@ -26,7 +27,7 @@ internal class BluetoothActionDecider(
             !options.selectedDeviceAddress.equals(address, ignoreCase=true)) return null
         if (lastDeviceConnected == connected) return null
         lastDeviceConnected = connected
-        if (now()-lastCommandAt < 10_000L && lastCommandAt != Long.MIN_VALUE) return null
+        if (lastCommandAt != Long.MIN_VALUE && now()-lastCommandAt < 10_000L) return null
         val action = if (connected && options.enabledUnlockOnConnect) BluetoothAction.UNLOCK
             else if (!connected && options.enabledLockOnDisconnect) BluetoothAction.LOCK else null
         if (action != null) lastCommandAt=now()
