@@ -1,12 +1,9 @@
 name: BYD Assistant V4 - Dynamic Bemfa AC Prototype
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'ChatGPT/TLP/BYD Assistant/V4.0/source/**'
-      - 'ChatGPT/TLP/BYD Assistant/V4.0/patch_dynamic_upstream.py'
-      - 'ChatGPT/TLP/BYD Assistant/V4.0/patch_bluetooth_upstream.py'
-      - '.github/workflows/byd-assistant-v4.yml'
+concurrency:
+  group: byd-v4-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -58,8 +55,14 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           cp upstream-byd/app/build/outputs/apk/debug/app-debug.apk dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk
-          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk | grep "package: name='dev.vehiclebridge.byd'"
+          {
+            echo "V4 DEVELOPMENT BUILD — NOT A VERIFIED IN-PLACE UPGRADE"
+            echo "Original signing certificate has not been verified."
+            echo
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk
+            echo
+            "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging dist/xiaodi-v4-DEVELOPMENT-NOT-UPGRADE.apk | grep '^package:'
+          } | tee dist/BUILD_IDENTITY.txt
           sha256sum dist/*.apk > dist/SHA256SUMS.txt
       - name: Upload experimental artifact (not compatible with original signature)
         uses: actions/upload-artifact@v4
