@@ -158,6 +158,12 @@ edit(base+"MainActivity.kt",
      '    private var manualRequest=false',
      '    private var manualRequest=false\n    private var climateSetpoint=26\n    private var climateDurationMinutes=30')
 edit(base+"MainActivity.kt",
+     '        binding.checkButton.setOnClickListener {controller.check()}',
+     '''        binding.checkButton.setOnClickListener {controller.check()}
+        binding.refreshTelemetry.setOnClickListener {
+            controller.state.info?.selected?.vin?.let {controller.refreshTelemetry(it)}
+        }''')
+edit(base+"MainActivity.kt",
      '        binding.shutdownButton.setOnClickListener {sendDoor(DoorAction.SHUTDOWN)}',
      '''        binding.shutdownButton.setOnClickListener {sendDoor(DoorAction.SHUTDOWN)}
         val durationOptions=listOf(10,15,20,25,30)
@@ -197,14 +203,14 @@ edit(base+"MainActivity.kt",
     }
     private fun sendDoor(action: DoorAction) {''')
 edit(base+"MainActivity.kt",
+     '        binding.refreshTelemetry.isEnabled=false',
+     '        binding.refreshTelemetry.isEnabled=!state.busy && vehicle!=null')
+edit(base+"MainActivity.kt",
      '        binding.telemetryCard.visibility=View.GONE',
      '        binding.telemetryCard.visibility=View.VISIBLE')
 edit(base+"MainActivity.kt",
      'binding.telemetryValues.text=report?.rows?.takeIf {it.isNotEmpty()}?.joinToString("\\n") {it.first+"     "+it.second} ?: "总里程、胎压、能耗：未提供"',
      'binding.telemetryValues.text=dev.vehiclebridge.byd.bridge.VehicleStatusPresenter.show(report)')
-edit(base+"MainActivity.kt",
-     'binding.refreshTelemetry.isEnabled=false',
-     'binding.refreshTelemetry.isEnabled=!state.busy && vehicle!=null && ("车辆数据" !in (info?.unsupportedTelemetry ?: emptySet()))')
 edit(base+"MainActivity.kt",
      '        binding.shutdownOnLock.setOnCheckedChangeListener(null)',
      '''        listOf(binding.climateMinus,binding.climatePlus,binding.climateDuration,binding.climateApply,binding.climateStop)
@@ -216,11 +222,13 @@ edit(base+"MainActivity.kt",
 shutil.copyfile(overlay/"APP_CHANGELOG.txt",app/"src/main/assets/APP_CHANGELOG.txt")
 shutil.copyfile(overlay/"ClimateControlParams.kt", app/(base+"bridge/ClimateControlParams.kt"))
 shutil.copyfile(overlay/"VehicleStatusPresenter.kt", app/(base+"bridge/VehicleStatusPresenter.kt"))
+shutil.copyfile(overlay/"BluetoothActionDecider.kt", app/(base+"bridge/BluetoothActionDecider.kt"))
 shutil.copyfile(overlay/"XiaodiCommandParser.kt", app/(base+"bridge/XiaodiCommandParser.kt"))
 shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateCommandGate.kt"))
 (app/"src/test/java/dev/vehiclebridge/byd/bridge").mkdir(parents=True, exist_ok=True)
 shutil.copyfile(overlay/"XiaodiCommandParserTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/XiaodiCommandParserTest.kt")
 shutil.copyfile(overlay/"ClimateControlParamsTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/ClimateControlParamsTest.kt")
+shutil.copyfile(overlay/"BluetoothActionDeciderTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/BluetoothActionDeciderTest.kt")
 edit(base+"bridge/BemfaService.kt",
      'private var gate: CommandGate?=null',
      'private var gate: ClimateCommandGate?=null')
