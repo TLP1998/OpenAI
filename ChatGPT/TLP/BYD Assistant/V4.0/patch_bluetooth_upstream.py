@@ -81,6 +81,9 @@ setup='''        val reminderDelays=listOf(1,3,5,10,15,30,60)
             sw.setOnCheckedChangeListener {_,checked ->
                 bluetoothPrefs.edit().putBoolean(key,checked).apply()
                 updateBluetoothMonitor()
+                if(key=="possible_unlocked_reminder" && checked && Build.VERSION.SDK_INT>=33 &&
+                    checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),4043)
             }
         }
         binding.selectVehicleBluetooth.setOnClickListener { selectBondedVehicleBluetooth() }
