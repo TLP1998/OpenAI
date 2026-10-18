@@ -1,0 +1,91 @@
+name: XiaoDi V4 - Fixed-Signature Install and Updates
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: xiaodi-v4-fixed-signature
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  signed-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout pinned upstream
+        uses: actions/checkout@v4
+        with:
+          repository: fm1223/byd-android
+          ref: 57434bede7e19342e512924a14439cca45738b96
+          path: upstream-byd
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK 36
+        run: |
+          set -euo pipefail
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | head -n1)
+          "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Verify signing secrets are supplied
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.XIAODI_SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_PASSWORD: ${{ secrets.XIAODI_SIGNING_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SIGNING_KEYSTORE_BASE64" ] || [ -z "$SIGNING_PASSWORD" ]; then
+            echo "::error::Configure XIAODI_SIGNING_KEYSTORE_BASE64 and XIAODI_SIGNING_PASSWORD in repository Actions secrets"
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/xiaodi_v4.jks"
+          test -s "$RUNNER_TEMP/xiaodi_v4.jks"
+          echo "XIAODI_KEYSTORE_PATH=$RUNNER_TEMP/xiaodi_v4.jks" >> "$GITHUB_ENV"
+      - name: Check Python patches
+        run: |
+          python3 -m py_compile \
+            'ChatGPT/TLP/BYD Assistant/V4.0/patch_dynamic_upstream.py' \
+            'ChatGPT/TLP/BYD Assistant/V4.0/patch_bluetooth_upstream.py' \
+            'ChatGPT/TLP/BYD Assistant/V4.0/patch_ci_tests.py' \
+            'ChatGPT/TLP/BYD Assistant/V4.0/patch_signed_identity.py'
+      - name: Patch dynamic climate and Bluetooth integration
+        run: |
+          set -euo pipefail
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_dynamic_upstream.py' \
+            upstream-byd 'ChatGPT/TLP/BYD Assistant/V4.0/source'
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_bluetooth_upstream.py' \
+            upstream-byd 'ChatGPT/TLP/BYD Assistant/V4.0/source'
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_ci_tests.py' upstream-byd
+          python3 'ChatGPT/TLP/BYD Assistant/V4.0/patch_signed_identity.py' upstream-byd
+      - name: Test and assemble fixed-signature release
+        env:
+          XIAODI_KEYSTORE_PASSWORD: ${{ secrets.XIAODI_SIGNING_PASSWORD }}
+        run: |
+          set -euo pipefail
+          gradle --no-daemon -p upstream-byd :app:testDebugUnitTest :app:assembleRelease
+      - name: Verify package, version, and public certificate fingerprint
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp upstream-byd/app/build/outputs/apk/release/app-release.apk dist/xiaodi-v4.0.0-signed.apk
+          APK=dist/xiaodi-v4.0.0-signed.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$APK" > dist/SIGNATURE.txt
+          cat dist/SIGNATURE.txt
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep "^package:" | tee dist/IDENTITY.txt
+          grep -q "package: name='com.tlp1998.xiaodi' versionCode='400' versionName='4.0.0'" dist/IDENTITY.txt
+          grep -qi '663e8e46a5b38dbf9d4ecb7f75bcb900efec0c6943525b426765603232b238fd' dist/SIGNATURE.txt
+          sha256sum "$APK" > dist/SHA256SUMS.txt
+      - name: Upload installable APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XiaoDi-V4.0.0-Fixed-Signature
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
