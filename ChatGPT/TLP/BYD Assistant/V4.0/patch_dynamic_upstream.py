@@ -260,13 +260,13 @@ edit(base+"bridge/BemfaService.kt",
      'gate=ClimateCommandGate(next.topic)')
 edit(base+"bridge/BemfaService.kt",
      'controller.dispatchBridge(target.id,action) {result ->',
-     'controller.dispatchBridge(target.id,action.action,
+     '''controller.dispatchBridge(target.id,action.action,
                                     if(action.action==dev.vehiclebridge.byd.protocol.DoorAction.CLIMATE)
                                         action.temperatureCelsius ?: getSharedPreferences("xiaodi_climate",MODE_PRIVATE)
                                             .getInt("temperature_celsius",26).coerceIn(15,31)
                                     else null,
                                     getSharedPreferences("xiaodi_climate",MODE_PRIVATE)
-                                        .getInt("duration_minutes",30).takeIf {it in listOf(10,15,20,25,30)} ?: 30) {result ->')
+                                        .getInt("duration_minutes",30).takeIf {it in listOf(10,15,20,25,30)} ?: 30) {result ->''')
 
 print("V4 dynamic MQTT temperature, fixed 30min OPENAIR, UI +/- apply and stop AC patched.")
 print("DO NOT SHIP without compilation, APK signature compatibility, and real-vehicle validation.")
