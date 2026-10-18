@@ -1,0 +1,16 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TLP-20261018-002｜DevSpace 脚本运行失败排查</title><style>body{font:16px/1.75 system-ui,"Microsoft YaHei",sans-serif;max-width:800px;margin:30px auto;padding:0 20px;color:#172536}h1{line-height:1.3}pre{overflow-x:auto;background:#f3f5f7;padding:16px;border-radius:10px;white-space:pre}section{margin:24px 0}a{color:#1267bd}</style></head><body><p><a href="../">← 返回 TLP Transfer</a></p><h1>DevSpace 脚本运行失败排查</h1><p>消息编号：TLP-20261018-002｜2026-10-18</p><p>右键使用 PowerShell 运行后窗口立即消失，<strong>不能据此判断安装成功</strong>。可能是脚本执行完毕，也可能发生错误。</p><section><h2>第一步：保持窗口打开并执行脚本</h2><p>按 Win + X，选择「终端」或「Windows PowerShell」，复制以下完整命令：</p><pre><code>$script = Join-Path $env:USERPROFILE "Downloads\TLP-DevSpace-Bootstrap-Win11.ps1"
+
+Write-Host "检查脚本文件：$script"
+
+if (Test-Path -LiteralPath $script) {
+    Write-Host "已找到脚本，准备执行。"
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $script
+    Write-Host "脚本退出代码：$LASTEXITCODE"
+} else {
+    Write-Host "错误：未找到脚本文件，请检查下载位置。"
+}
+
+Read-Host "按回车键关闭检查"</code></pre><p>如果脚本实际保存在桌面或其他位置，请改为实际路径。</p></section><section><h2>第二步：检查环境</h2><pre><code>node --version
+npm --version
+git --version
+npm list -g @waishnav/devspace</code></pre><p>分别检查 Node.js、npm、Git 和 DevSpace。DevSpace 显示 (empty) 不一定代表初始化失败，因为脚本使用 npx 调用，不一定全局安装。</p></section><section><h2>第三步：发送排查结果</h2><p>请把 PowerShell 窗口中的<strong>第一条红色错误信息和最后一屏结果</strong>截图发回 TLP 项目聊天。</p><p>原 Bootstrap 安装流程仍需核查，暂时不要反复右键运行；不要公开 Owner 密码或令牌。</p></section><p><a href="https://github.com/TLP1998/OpenAI/issues/6">GitHub Issue 与在线回复</a></p></body></html>
