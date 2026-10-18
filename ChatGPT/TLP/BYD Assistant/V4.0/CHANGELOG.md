@@ -1,3 +1,11 @@
+## 2026-10-18 · CI 失败排查与兼容测试修复
+- 用户截图显示多次 GitHub Actions 构建失败；图片无法辨认失败步骤，**不能据此判断比亚迪远程控制 API 已失效**。
+- 核实上游基础仍为 `fm1223/byd-android`；`jkaberg/pyBYD` 仅为 `OPENAIR` 温度/运行时间参数研究参考，**不作为 V4 的 Python 运行时依赖**。
+- 核对固定上游提交 `57434bede7e19342e512924a14439cca45738b96` 的 Android 项目及历史单元测试。
+- 新增 `patch_ci_tests.py`：修复上游 `ShutdownControlTest` 的老测试假设：V4 仅在 LOCKDOOR 返回 `SUCCESS` 后执行 `CLOSEAIR`，不把 `ACCEPTED` 当成已确认上锁。
+- GitHub Actions 更新为编译前应用兼容测试补丁。**无运行日志及实车验证，OPENAIR 是否支持当前车型仍未确认。**
+- 若实际车辆返回“不支持空调指令”，再在 APP 中禁用或移除该功能；不要因为 CI 编译错误就移除 API。
+
 ## 2026-10-18 · 蓝牙后台监听及通知（实验性）
 - 已添加 `VehicleBluetoothService.kt`：按用户选定已配对设备地址监听 Android 蓝牙 ACL 连接/断开事件；启动为有持续通知的前台服务，断开等待 15 秒以降低瞬时掉线误操作。
 - 已添加 `patch_bluetooth_upstream.py`：Manifest 蓝牙权限和振动权限、设置页已配对设备选择器、连接解锁/断开锁车/可能未锁提醒三个独立开关、提醒时长选择（1/3/5/10/15/30/60分钟）。
