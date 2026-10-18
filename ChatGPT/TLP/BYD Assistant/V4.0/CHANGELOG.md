@@ -1,3 +1,10 @@
+## 2026-10-18 · V4.0 成功构建后的签名核对
+- 用户确认 GitHub Actions 第44、第45次运行出现绿色成功标记；本记录不能取代 APK 证书检查或实车验证。
+- 工作流改为 **仅手动启动 workflow_dispatch**，并使用 concurrency 取消旧的重复运行，避免每次源码提交自动编译。
+- 后续构建产物包含 `BUILD_IDENTITY.txt`，记录 `apksigner` 的签名证书信息和 APK 包名，方便与手机已安装版本比对。
+- 覆盖更新需 applicationId 相同（原版预期 `dev.vehiclebridge.byd`）、签名证书兼容、versionCode 递增；仅靠相同包名不够。GitHub Actions 生成的临时 debug 签名通常不能用于覆盖原开发者签名的 APK。
+- 在取得当前安装包的签名指纹、确认匹配之前，不发布或安装所谓“直接覆盖版”。无原签名密钥时不能承诺无损覆盖升级。
+
 ## 2026-10-18 · CI 失败排查与兼容测试修复
 - 用户截图显示多次 GitHub Actions 构建失败；图片无法辨认失败步骤，**不能据此判断比亚迪远程控制 API 已失效**。
 - 核实上游基础仍为 `fm1223/byd-android`；`jkaberg/pyBYD` 仅为 `OPENAIR` 温度/运行时间参数研究参考，**不作为 V4 的 Python 运行时依赖**。
