@@ -162,6 +162,8 @@ edit(base+"MainActivity.kt",
      '''        binding.shutdownButton.setOnClickListener {sendDoor(DoorAction.SHUTDOWN)}
         val durationOptions=listOf(10,15,20,25,30)
         val climatePrefs=getSharedPreferences("xiaodi_climate",MODE_PRIVATE)
+        climateSetpoint=climatePrefs.getInt("temperature_celsius",26).coerceIn(15,31)
+        setClimateSetpoint(climateSetpoint)
         climateDurationMinutes=climatePrefs.getInt("duration_minutes",30)
             .takeIf {it in durationOptions} ?: 30
         binding.climateDuration.adapter=ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,
@@ -189,6 +191,8 @@ edit(base+"MainActivity.kt",
      '    private fun sendDoor(action: DoorAction) {',
      '''    private fun setClimateSetpoint(value: Int) {
         climateSetpoint=value.coerceIn(15,31)
+        getSharedPreferences("xiaodi_climate",MODE_PRIVATE).edit()
+            .putInt("temperature_celsius",climateSetpoint).apply()
         binding.climateTemperature.text="$climateSetpoint ℃"
     }
     private fun sendDoor(action: DoorAction) {''')
@@ -215,7 +219,11 @@ edit(base+"bridge/BemfaService.kt",
      'gate=ClimateCommandGate(next.topic)')
 edit(base+"bridge/BemfaService.kt",
      'controller.dispatchBridge(target.id,action) {result ->',
-     'controller.dispatchBridge(target.id,action.action,action.temperatureCelsius,
+     'controller.dispatchBridge(target.id,action.action,
+                                    if(action.action==dev.vehiclebridge.byd.protocol.DoorAction.CLIMATE)
+                                        action.temperatureCelsius ?: getSharedPreferences("xiaodi_climate",MODE_PRIVATE)
+                                            .getInt("temperature_celsius",26).coerceIn(15,31)
+                                    else null,
                                     getSharedPreferences("xiaodi_climate",MODE_PRIVATE)
                                         .getInt("duration_minutes",30).takeIf {it in listOf(10,15,20,25,30)} ?: 30) {result ->')
 
