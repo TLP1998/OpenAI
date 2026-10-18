@@ -143,12 +143,34 @@ extra = '''<LinearLayout android:layout_width="match_parent" android:layout_heig
 edit(layout,anchor,extra+anchor)
 edit(layout, '<Button android:id="@+id/licenseButton"',
      '<Button android:id="@+id/changelogButton" style="@style/ActionButton" android:text="软件更新记录" android:layout_marginTop="12dp" />\n                        <Button android:id="@+id/licenseButton"')
+# Editable vehicle Bluetooth name in settings; labels alone never authorize automation.
+edit(layout, '<Button android:id="@+id/notificationSettings"',
+     '''<TextView style="@style/Section" android:text="车辆蓝牙识别" android:layout_marginTop="12dp" />
+                        <TextView style="@style/Caption" android:text="蓝牙设备名称（默认：秦Plus），保存后生效。实际车控须选择已配对设备，不能仅凭名称触发。" android:layout_marginTop="8dp" />
+                        <EditText android:id="@+id/vehicleBluetoothName"
+                                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                                  android:inputType="text" android:singleLine="true" android:maxLength="64"
+                                  android:hint="秦Plus" android:layout_marginTop="8dp" style="@style/Field" />
+                        <Button android:id="@+id/saveVehicleBluetoothName"
+                                style="@style/ActionButton" android:text="保存蓝牙名称" android:layout_marginTop="8dp" />
+                        <Button android:id="@+id/notificationSettings"''')
+
 xml = (app/layout).read_text(encoding="utf-8")
 ET.fromstring(xml)
 
 edit(base+"MainActivity.kt",
      '        binding.aboutVersion.text="版本 "',
-     '''        binding.changelogButton.setOnClickListener {
+     '''        val bluetoothPrefs=getSharedPreferences("xiaodi_bluetooth",MODE_PRIVATE)
+        binding.vehicleBluetoothName.setText(bluetoothPrefs.getString("vehicle_name","秦Plus") ?: "秦Plus")
+        binding.saveVehicleBluetoothName.setOnClickListener {
+            val name=binding.vehicleBluetoothName.text.toString().trim()
+            if(name.isBlank()) binding.vehicleBluetoothName.error="请填写车辆蓝牙名称"
+            else {
+                bluetoothPrefs.edit().putString("vehicle_name",name).apply()
+                android.widget.Toast.makeText(this,"蓝牙名称已保存",android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.changelogButton.setOnClickListener {
             val details=assets.open("APP_CHANGELOG.txt").bufferedReader().use {it.readText()}
             AlertDialog.Builder(this).setTitle("软件更新记录").setMessage(details)
                 .setPositiveButton("关闭",null).show()
@@ -229,6 +251,7 @@ shutil.copyfile(overlay/"ClimateCommandGate.kt", app/(base+"bridge/ClimateComman
 shutil.copyfile(overlay/"XiaodiCommandParserTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/XiaodiCommandParserTest.kt")
 shutil.copyfile(overlay/"ClimateControlParamsTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/ClimateControlParamsTest.kt")
 shutil.copyfile(overlay/"BluetoothActionDeciderTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/BluetoothActionDeciderTest.kt")
+shutil.copyfile(overlay/"ClimateCommandGateTest.kt", app/"src/test/java/dev/vehiclebridge/byd/bridge/ClimateCommandGateTest.kt")
 edit(base+"bridge/BemfaService.kt",
      'private var gate: CommandGate?=null',
      'private var gate: ClimateCommandGate?=null')
