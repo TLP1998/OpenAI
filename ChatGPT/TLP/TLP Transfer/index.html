@@ -100,6 +100,11 @@ main{padding-top:22px}
 <script>
 const repo="TLP1998/OpenAI";
 const messages=[{
+ id:"TLP-20261018-003",title:"DevSpace Windows 10/11 兼容安装 V2",date:"2026-10-18",category:"部署指南",
+ summary:"修复旧脚本只支持 Win11 的限制；提供 Win10/11 兼容安装脚本和运行命令。",
+ body:["已确认当前电脑为 Windows 10 专业版 22H2，旧版脚本因系统限制退出。","V2 支持 Windows 10/11，检查 Git、Git Bash、Node/npm，并按提示选择初始化 DevSpace。","不要公开 Owner 密码或开放整个 C 盘。先完成 V1，再继续 MCP 远程连接验收。"],
+ page:"messages/2026-10-18-003.html",files:[{name:"Win10/11 兼容安装脚本 V2（PS1）",url:"attachments/TLP-DevSpace-Bootstrap-Win10-Win11-V2.ps1"}],issueNumber:7
+},{
  id:"TLP-20261018-002",title:"DevSpace PowerShell 脚本运行失败排查",date:"2026-10-18",category:"故障排查",
  summary:"右键运行后窗口消失？通过 PowerShell 保留错误输出，检查 Node、npm、Git 与 DevSpace。",
  body:["右键使用 PowerShell 运行后窗口消失，不能据此判断安装成功。","打开 Windows PowerShell，执行诊断命令并保留窗口，检查脚本路径和退出代码。","继续检查 node、npm、git 及 DevSpace；将第一条红色错误和最后一屏截图发回 TLP 项目聊天。","不要反复右键运行，不要公开 Owner 密码或令牌。"],
