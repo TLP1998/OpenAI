@@ -1,6 +1,9 @@
 name: XiaoDi V4 - Fixed-Signature Install and Updates
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'ChatGPT/TLP/BYD Assistant/V4.0/SIGNED_BUILD_TRIGGER.txt'
 
 concurrency:
   group: xiaodi-v4-fixed-signature
