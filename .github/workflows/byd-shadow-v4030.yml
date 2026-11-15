@@ -26,10 +26,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
-      - name: Android SDK
-        uses: android-actions/setup-android@v3
-      - name: Android platform and build tools
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Install Android SDK platform and build tools using runner SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'y' | sdkmanager --licenses > /dev/null || true
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
       - name: Verify and extract source snapshot
         shell: bash
         run: |
